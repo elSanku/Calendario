@@ -3,6 +3,11 @@
 import type { Holiday } from './holiday';
 //FIN SPEC-002 - 01
 
+//INI SPEC-003 - 01
+// Categorías oficiales del calendario de productividad
+export type EventCategory = 'work' | 'personal' | 'health' | 'important';
+//FIN SPEC-003 - 01
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -10,6 +15,10 @@ export interface CalendarEvent {
   time?: string;
   description?: string;
   color?: string; // Color para el dot indicador
+  //INI SPEC-003 - 01
+  // Categoría semántica opcional del evento (retrocompatible con eventos legados)
+  category?: EventCategory;
+  //FIN SPEC-003 - 01
 }
 
 export interface DayCell {

@@ -76,6 +76,18 @@
   outline-offset: -1px;
 }
 
+/* INI SPEC-003 - 05 */
+/* Elevación y visibilidad desbordada cuando la celda tiene popover abierto */
+.popoverOpen {
+  overflow: visible !important;
+  z-index: 40 !important;
+}
+
+.popoverOpen:hover {
+  transform: none;
+}
+/* FIN SPEC-003 - 05 */
+
 .dayNumber {
   font-size: 0.92rem;
   font-weight: 600;
@@ -222,6 +234,239 @@
   color: rgba(255, 255, 255, 0.95);
 }
 
+/* INI SPEC-003 - 05 */
+/* Lista vertical de chips horizontales de eventos en celda */
+.chipsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.eventChip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  border-left-width: 3px;
+  border-left-style: solid;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  font-weight: 500;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.eventChip:hover {
+  filter: brightness(0.96);
+}
+
+.selected .eventChip {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.chipTime {
+  font-size: 0.62rem;
+  font-weight: 700;
+  opacity: 0.9;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.chipTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.moreChipBtn {
+  background-color: var(--bg-subtle, rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-secondary, #64748b);
+  font-size: 0.64rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 6px;
+  line-height: 1.2;
+  cursor: pointer;
+  text-align: left;
+  width: fit-content;
+  max-width: 100%;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.moreChipBtn:hover {
+  background-color: var(--bg-surface, #ffffff);
+  color: var(--text-primary, #1e293b);
+  border-color: var(--border-strong, #cbd5e1);
+}
+
+.selected .moreChipBtn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+.selected .moreChipBtn:hover {
+  background-color: rgba(255, 255, 255, 0.32);
+}
+
+/* Popover contextual flotante de eventos del día */
+.morePopover {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 250px;
+  max-width: min(290px, 90vw);
+  background-color: var(--bg-surface-elevated, #ffffff);
+  border: 1px solid var(--border-strong, #cbd5e1);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.22), 0 6px 12px -2px rgba(0, 0, 0, 0.12);
+  padding: 10px 12px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: default;
+  color: var(--text-primary, #1e293b);
+  animation: popoverFadeIn 0.12s ease-out;
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.popoverAlignRight {
+  left: auto;
+  right: 4px;
+}
+
+.popoverAlignBottom {
+  top: auto;
+  bottom: 4px;
+}
+
+.popoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  padding-bottom: 6px;
+  gap: 8px;
+}
+
+.popoverTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  line-height: 1.2;
+  text-transform: capitalize;
+}
+
+.popoverCloseBtn {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.popoverCloseBtn:hover {
+  background-color: var(--bg-subtle, #f1f5f9);
+  color: var(--text-primary, #1e293b);
+}
+
+.popoverCloseBtn:focus-visible {
+  outline: 2px solid var(--accent-primary, #c85a32);
+  outline-offset: 1px;
+}
+
+.popoverEventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.popoverEventItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm, 4px);
+  border-left-width: 3px;
+  border-left-style: solid;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.popoverEventInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.popoverEventTitle {
+  font-size: 0.76rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.popoverEditBtn {
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  color: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.85;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.popoverEditBtn:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.06);
+}
+/* FIN SPEC-003 - 05 */
+
 @media (max-width: 600px) {
   .gridContainer {
     padding: 12px 10px;
@@ -254,5 +499,23 @@
     width: auto;
   }
   /* FIN SPEC-002 - 04 */
+  /* INI SPEC-003 - 05 */
+  .eventChip {
+    padding: 1px 3px;
+    font-size: 0.6rem;
+    gap: 2px;
+  }
+  .chipTime {
+    display: none;
+  }
+  .moreChipBtn {
+    font-size: 0.58rem;
+    padding: 1px 4px;
+  }
+  .morePopover {
+    width: 200px;
+    padding: 8px 10px;
+  }
+  /* FIN SPEC-003 - 05 */
 }
 /* FIN SPEC-001 - 05 */

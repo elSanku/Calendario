@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
-import type { CalendarEvent } from '../types/calendar';
+//INI SPEC-003 - 02
+// Importación y re-exportación de tipos de categorías y utilidades de resolución
+import type { CalendarEvent, EventCategory } from '../types/calendar';
+import { resolveEventCategory, getCategoryMeta, isValidCategory } from './categoryUtils';
+export { resolveEventCategory, getCategoryMeta, isValidCategory };
+//FIN SPEC-003 - 02
 
 export const TITLE_MIN = 2;
 export const TITLE_MAX = 80;
@@ -17,6 +22,10 @@ export interface EventFormValues {
   date: string;
   startTime: string;
   endTime: string;
+  //INI SPEC-003 - 02
+  // Categoría semántica del evento
+  category?: EventCategory;
+  //FIN SPEC-003 - 02
 }
 
 export type EventFormErrors = Partial<Record<keyof EventFormValues, string>>;
@@ -74,6 +83,13 @@ export const validateEventForm = (values: EventFormValues): EventFormErrors => {
     }
   }
 
+  //INI SPEC-003 - 02
+  // Validación de categoría si fue provista
+  if (values.category !== undefined && !isValidCategory(values.category)) {
+    errors.category = 'La categoría seleccionada no es válida.';
+  }
+  //FIN SPEC-003 - 02
+
   return errors;
 };
 
@@ -120,20 +136,32 @@ export const findDuplicate = (
 /** Filtra los eventos leídos de almacenamiento, descartando los mal formados. */
 export const sanitizeEvents = (data: unknown): CalendarEvent[] => {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is CalendarEvent => {
-    if (typeof item !== 'object' || item === null) return false;
-    const e = item as Record<string, unknown>;
-    return (
-      typeof e.id === 'string' &&
-      e.id.length > 0 &&
-      typeof e.title === 'string' &&
-      typeof e.date === 'string' &&
-      isValidDateStr(e.date) &&
-      (e.time === undefined || (typeof e.time === 'string' && isValidStorageTimeStr(e.time))) &&
-      (e.description === undefined || typeof e.description === 'string') &&
-      (e.color === undefined || typeof e.color === 'string')
-    );
-  });
+  //INI SPEC-003 - 02
+  // Valida estructura y garantiza la resolución de category manteniendo retrocompatibilidad
+  return data
+    .filter((item): item is CalendarEvent => {
+      if (typeof item !== 'object' || item === null) return false;
+      const e = item as Record<string, unknown>;
+      return (
+        typeof e.id === 'string' &&
+        e.id.length > 0 &&
+        typeof e.title === 'string' &&
+        typeof e.date === 'string' &&
+        isValidDateStr(e.date) &&
+        (e.time === undefined || (typeof e.time === 'string' && isValidStorageTimeStr(e.time))) &&
+        (e.description === undefined || typeof e.description === 'string') &&
+        (e.color === undefined || typeof e.color === 'string') &&
+        (e.category === undefined || isValidCategory(e.category) || typeof e.category === 'string')
+      );
+    })
+    .map((item) => {
+      const e = item as CalendarEvent;
+      return {
+        ...e,
+        category: resolveEventCategory(e),
+      };
+    });
+  //FIN SPEC-003 - 02
 };
 
 /** Ordena: primero eventos sin hora o "Todo el día", luego por hora ascendente. */

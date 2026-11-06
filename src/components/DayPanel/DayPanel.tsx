@@ -4,6 +4,11 @@ import React from 'react';
 import { Plus, Sparkles } from 'lucide-react';
 import type { Holiday } from '../../types/holiday';
 //FIN SPEC-002 - 05
+//INI SPEC-003 - 06
+// Iconos y utilidades para línea de tiempo y categorías
+import { RotateCcw } from 'lucide-react';
+import { getCategoryMeta, resolveEventCategory } from '../../utils/categoryUtils';
+//FIN SPEC-003 - 06
 import { EventActionsMenu } from '../EventActionsMenu/EventActionsMenu';
 import type { CalendarEvent } from '../../types/calendar';
 import { formatDayPanelHeader } from '../../utils/dateUtils';
@@ -16,6 +21,11 @@ interface DayPanelProps {
   // Feriado nacional del día seleccionado si existe
   holiday?: Holiday | null;
   //FIN SPEC-002 - 05
+  //INI SPEC-003 - 06
+  // Filtros activos y acción de restablecimiento
+  hasActiveFilters?: boolean;
+  onResetFilters?: () => void;
+  //FIN SPEC-003 - 06
   onAddEventClick?: () => void;
   onEditEvent?: (event: CalendarEvent) => void;
   onDeleteEvent?: (event: CalendarEvent) => void;
@@ -29,6 +39,10 @@ export const DayPanel: React.FC<DayPanelProps> = ({
   //INI SPEC-002 - 05
   holiday,
   //FIN SPEC-002 - 05
+  //INI SPEC-003 - 06
+  hasActiveFilters = false,
+  onResetFilters,
+  //FIN SPEC-003 - 06
   onAddEventClick,
   onEditEvent,
   onDeleteEvent,
@@ -61,37 +75,111 @@ export const DayPanel: React.FC<DayPanelProps> = ({
       )}
       {/* FIN SPEC-002 - 05 */}
 
-      {/* Lista de eventos del día */}
+      {/* INI SPEC-003 - 06 */}
+      {/* Lista de eventos del día como línea de tiempo estructurada con categorías semánticas */}
       <div className={styles.eventsContainer}>
         {events.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>No hay eventos programados para este día.</p>
+            {hasActiveFilters ? (
+              <>
+                <p className={styles.emptyStateMessage}>
+                  No hay eventos que coincidan con los filtros o búsqueda activa.
+                </p>
+                {onResetFilters && (
+                  <button
+                    type="button"
+                    className={styles.emptyStateBtn}
+                    onClick={onResetFilters}
+                  >
+                    <RotateCcw size={14} aria-hidden="true" />
+                    <span>Restablecer filtros</span>
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                <p className={styles.emptyStateMessage}>
+                  No hay eventos programados para este día.
+                </p>
+                {onAddEventClick && (
+                  <button
+                    type="button"
+                    className={styles.emptyStateBtn}
+                    onClick={onAddEventClick}
+                  >
+                    <Plus size={14} aria-hidden="true" />
+                    <span>Programar evento</span>
+                  </button>
+                )}
+              </>
+            )}
           </div>
         ) : (
-          <ul className={styles.eventList}>
-            {events.map((evt) => (
-              <li
-                key={evt.id}
-                className={styles.eventCard}
-                style={{ borderLeftColor: evt.color || 'var(--accent-primary)' }}
-              >
-                <div className={styles.eventInfo}>
-                  <h4 className={styles.eventTitle} title={evt.title}>
-                    {evt.title}
-                  </h4>
-                  <span className={styles.eventTime}>{evt.time ?? 'Todo el día'}</span>
-                </div>
-                {/* Menú desplegable con acciones Editar / Eliminar */}
-                <EventActionsMenu
-                  eventTitle={evt.title}
-                  onEdit={() => onEditEvent?.(evt)}
-                  onDelete={() => onDeleteEvent?.(evt)}
-                />
-              </li>
-            ))}
-          </ul>
+          <ol className={styles.timelineList}>
+            {events.map((evt) => {
+              const categoryKey = resolveEventCategory(evt);
+              const meta = getCategoryMeta(categoryKey);
+              const timeDisplay = evt.time ? evt.time : 'Todo el día';
+
+              return (
+                <li key={evt.id} className={styles.timelineItem}>
+                  {/* Conector visual de línea de tiempo */}
+                  <div className={styles.timelineTrack} aria-hidden="true">
+                    <span
+                      className={styles.timelineDot}
+                      style={{ backgroundColor: meta.dotVar }}
+                    />
+                    <span className={styles.timelineLine} />
+                  </div>
+
+                  {/* Tarjeta de evento */}
+                  <article
+                    className={styles.eventCard}
+                    style={{ borderLeftColor: evt.color || meta.color }}
+                  >
+                    <div className={styles.eventCardHeader}>
+                      <span
+                        className={styles.categoryBadge}
+                        style={{
+                          backgroundColor: meta.bgVar,
+                          color: meta.textVar,
+                        }}
+                      >
+                        <span
+                          className={styles.categoryBadgeDot}
+                          style={{ backgroundColor: meta.dotVar }}
+                          aria-hidden="true"
+                        />
+                        {meta.label}
+                      </span>
+                      <EventActionsMenu
+                        eventTitle={evt.title}
+                        onEdit={() => onEditEvent?.(evt)}
+                        onDelete={() => onDeleteEvent?.(evt)}
+                      />
+                    </div>
+
+                    <div className={styles.eventCardBody}>
+                      <h4 className={styles.eventTitle} title={evt.title}>
+                        {evt.title}
+                      </h4>
+                      <div className={styles.timeBadge}>
+                        <span className={styles.timeText}>{timeDisplay}</span>
+                      </div>
+                      {evt.description && (
+                        <p className={styles.eventDescription}>
+                          {evt.description}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
+          </ol>
         )}
       </div>
+      {/* FIN SPEC-003 - 06 */}
 
       {/* Botón flotante circular + con acento terracota */}
       <button

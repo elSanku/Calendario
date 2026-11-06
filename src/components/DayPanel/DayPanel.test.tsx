@@ -67,5 +67,123 @@ describe('DayPanel', () => {
     expect(screen.queryByTestId('holiday-banner')).toBeNull();
   });
   //FIN SPEC-002 - 05
+
+  //INI SPEC-003 - 06
+  it('renderiza la etiqueta de categoría en español para los eventos de la línea de tiempo', () => {
+    const events: CalendarEvent[] = [
+      { id: '1', title: 'Reunión de equipo', date: defaultDateStr, category: 'work', time: '10:00 - 11:00' },
+      { id: '2', title: 'Chequeo médico', date: defaultDateStr, category: 'health', time: '12:00 - 13:00' },
+      { id: '3', title: 'Almuerzo familiar', date: defaultDateStr, category: 'personal', time: '13:30 - 15:00' },
+      { id: '4', title: 'Entrega final', date: defaultDateStr, category: 'important', time: '17:00 - 18:00' },
+    ];
+    render(<DayPanel selectedDateStr={defaultDateStr} events={events} />);
+
+    expect(screen.getByText('Trabajo')).toBeTruthy();
+    expect(screen.getByText('Salud')).toBeTruthy();
+    expect(screen.getByText('Personal')).toBeTruthy();
+    expect(screen.getByText('Importante')).toBeTruthy();
+  });
+
+  it('muestra la descripción del evento cuando está presente y la omite si no existe', () => {
+    const events: CalendarEvent[] = [
+      {
+        id: '1',
+        title: 'Presentación de Proyecto',
+        date: defaultDateStr,
+        category: 'work',
+        description: 'Revisión técnica de la arquitectura con el equipo.',
+      },
+      {
+        id: '2',
+        title: 'Llamada rápida',
+        date: defaultDateStr,
+        category: 'work',
+      },
+    ];
+    render(<DayPanel selectedDateStr={defaultDateStr} events={events} />);
+
+    expect(screen.getByText('Revisión técnica de la arquitectura con el equipo.')).toBeTruthy();
+    expect(screen.queryByText('undefined')).toBeNull();
+  });
+
+  it('muestra el estado vacío orientador con botón de restablecer filtros cuando hasActiveFilters es true', () => {
+    const onResetFilters = vi.fn();
+    render(
+      <DayPanel
+        selectedDateStr={defaultDateStr}
+        events={[]}
+        hasActiveFilters={true}
+        onResetFilters={onResetFilters}
+      />,
+    );
+
+    expect(
+      screen.getByText('No hay eventos que coincidan con los filtros o búsqueda activa.'),
+    ).toBeTruthy();
+    expect(
+      screen.queryByText('No hay eventos programados para este día.'),
+    ).toBeNull();
+
+    const resetBtn = screen.getByRole('button', { name: 'Restablecer filtros' });
+    fireEvent.click(resetBtn);
+    expect(onResetFilters).toHaveBeenCalledTimes(1);
+  });
+
+  it('muestra el botón orientador de programar evento en estado vacío sin filtros activos', () => {
+    const onAddEventClick = vi.fn();
+    render(
+      <DayPanel
+        selectedDateStr={defaultDateStr}
+        events={[]}
+        hasActiveFilters={false}
+        onAddEventClick={onAddEventClick}
+      />,
+    );
+
+    expect(
+      screen.getByText('No hay eventos programados para este día.'),
+    ).toBeTruthy();
+
+    const programBtn = screen.getByRole('button', { name: 'Programar evento' });
+    fireEvent.click(programBtn);
+    expect(onAddEventClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('permite la convivencia del banner conmemorativo de feriado con la línea de tiempo de eventos', () => {
+    const holiday = {
+      id: 1,
+      date: defaultDateStr,
+      title: 'Día de las Iglesias Evangélicas y Protestantes',
+    };
+    const events: CalendarEvent[] = [
+      {
+        id: '1',
+        title: 'Culto especial',
+        date: defaultDateStr,
+        category: 'personal',
+        time: '11:00 - 12:30',
+        description: 'Celebración festiva comunitaria.',
+      },
+    ];
+
+    render(
+      <DayPanel
+        selectedDateStr={defaultDateStr}
+        events={events}
+        holiday={holiday}
+      />,
+    );
+
+    // Banner de feriado
+    expect(screen.getByTestId('holiday-banner')).toBeTruthy();
+    expect(screen.getByText('Feriado Oficial')).toBeTruthy();
+    expect(screen.getByText('Día de las Iglesias Evangélicas y Protestantes')).toBeTruthy();
+
+    // Evento en la línea de tiempo
+    expect(screen.getByText('Culto especial')).toBeTruthy();
+    expect(screen.getByText('Personal')).toBeTruthy();
+    expect(screen.getByText('Celebración festiva comunitaria.')).toBeTruthy();
+  });
+  //FIN SPEC-003 - 06
 });
 

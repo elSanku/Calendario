@@ -1,72 +1,85 @@
-import type { CalendarEvent } from '../types/calendar';
+//INI SPEC-003 - 02
+// Asignación de categorías oficiales y colores semánticos a datos semilla
+import type { CalendarEvent, EventCategory } from '../types/calendar';
+import { EVENT_CATEGORY_MAP } from '../utils/categoryUtils';
+//FIN SPEC-003 - 02
 
 const currentYear = new Date().getFullYear();
 
 // Paleta de colores temáticos para los indicadores
 const EVENT_COLORS = {
-  sport: '#2ecc71',      // Verde para deportes / aire libre
-  meal: '#f39c12',       // Naranja / dorado para comidas
-  work: '#3498db',       // Azul para trabajo diario
-  meeting: '#9b59b6',    // Morado para reuniones y clientes
-  friends: '#1abc9c',    // Turquesa para amigos
-  family: '#e74c3c',     // Rojo / coral para familia, esposa
-  vacation: '#e84393',   // Rosa intenso para vacaciones y escapadas
+  sport: EVENT_CATEGORY_MAP.health.color,
+  meal: EVENT_CATEGORY_MAP.personal.color,
+  work: EVENT_CATEGORY_MAP.work.color,
+  meeting: EVENT_CATEGORY_MAP.work.color,
+  important: EVENT_CATEGORY_MAP.important.color,
+  friends: EVENT_CATEGORY_MAP.personal.color,
+  family: EVENT_CATEGORY_MAP.personal.color,
+  vacation: EVENT_CATEGORY_MAP.personal.color,
 };
 
+interface EventTemplate {
+  title: string;
+  time: string;
+  desc: string;
+  category: EventCategory;
+  color: string;
+}
+
 // 1. Actividades matutinas deportivas
-const MORNING_SPORTS = [
-  { title: 'Partido de Tenis en el Club', time: '07:00 - 08:15', desc: 'Entrenamiento y partido matutino de tenis', color: EVENT_COLORS.sport },
-  { title: 'Natación en Piscina Olímpica', time: '06:45 - 08:00', desc: 'Sesión de largos y resistencia en el agua', color: EVENT_COLORS.sport },
-  { title: 'Ruta en Bicicleta de Ruta', time: '07:00 - 08:30', desc: 'Recorrido en bici al aire libre por la costanera', color: EVENT_COLORS.sport },
-  { title: 'Paseo en Bicicleta Urbana', time: '07:30 - 08:30', desc: 'Pedaleo suave y activación matinal', color: EVENT_COLORS.sport },
+const MORNING_SPORTS: EventTemplate[] = [
+  { title: 'Partido de Tenis en el Club', time: '07:00 - 08:15', desc: 'Entrenamiento y partido matutino de tenis', category: 'health', color: EVENT_COLORS.sport },
+  { title: 'Natación en Piscina Olímpica', time: '06:45 - 08:00', desc: 'Sesión de largos y resistencia en el agua', category: 'health', color: EVENT_COLORS.sport },
+  { title: 'Ruta en Bicicleta de Ruta', time: '07:00 - 08:30', desc: 'Recorrido en bici al aire libre por la costanera', category: 'health', color: EVENT_COLORS.sport },
+  { title: 'Paseo en Bicicleta Urbana', time: '07:30 - 08:30', desc: 'Pedaleo suave y activación matinal', category: 'health', color: EVENT_COLORS.sport },
 ];
 
 // 2. Comidas del día
-const MEAL_EVENTS = [
-  { title: 'Desayuno Saludable & Café', time: '08:30 - 09:15', desc: 'Tostadas, fruta fresca y café americano', color: EVENT_COLORS.meal },
-  { title: 'Almuerzo con Menú Ejecutivo', time: '13:00 - 14:00', desc: 'Pausa para almuerzo nutritivo', color: EVENT_COLORS.meal },
-  { title: 'Cena Gourmet & Maridaje', time: '20:30 - 22:00', desc: 'Cena tranquila al finalizar la jornada', color: EVENT_COLORS.meal },
-  { title: 'Brunch de Fin de Semana', time: '11:00 - 12:30', desc: 'Brunch relajado con jugos naturales y panadería', color: EVENT_COLORS.meal },
+const MEAL_EVENTS: EventTemplate[] = [
+  { title: 'Desayuno Saludable & Café', time: '08:30 - 09:15', desc: 'Tostadas, fruta fresca y café americano', category: 'personal', color: EVENT_COLORS.meal },
+  { title: 'Almuerzo con Menú Ejecutivo', time: '13:00 - 14:00', desc: 'Pausa para almuerzo nutritivo', category: 'personal', color: EVENT_COLORS.meal },
+  { title: 'Cena Gourmet & Maridaje', time: '20:30 - 22:00', desc: 'Cena tranquila al finalizar la jornada', category: 'personal', color: EVENT_COLORS.meal },
+  { title: 'Brunch de Fin de Semana', time: '11:00 - 12:30', desc: 'Brunch relajado con jugos naturales y panadería', category: 'personal', color: EVENT_COLORS.meal },
 ];
 
 // 3. Trabajo diario y proyectos
-const WORK_EVENTS = [
-  { title: 'Jornada Laboral y Enfoque en Código', time: '09:30 - 13:00', desc: 'Desarrollo de nuevas funcionalidades y arquitectura', color: EVENT_COLORS.work },
-  { title: 'Revisión de Pull Requests y QA', time: '14:30 - 16:00', desc: 'Revisión técnica de código y pruebas de integración', color: EVENT_COLORS.work },
-  { title: 'Bloque de Deep Work y Planificación', time: '10:00 - 12:30', desc: 'Resolución de problemas técnicos complejos', color: EVENT_COLORS.work },
-  { title: 'Cierre de Sprint y Documentación', time: '16:00 - 17:30', desc: 'Actualización de documentación y métricas de avance', color: EVENT_COLORS.work },
+const WORK_EVENTS: EventTemplate[] = [
+  { title: 'Jornada Laboral y Enfoque en Código', time: '09:30 - 13:00', desc: 'Desarrollo de nuevas funcionalidades y arquitectura', category: 'work', color: EVENT_COLORS.work },
+  { title: 'Revisión de Pull Requests y QA', time: '14:30 - 16:00', desc: 'Revisión técnica de código y pruebas de integración', category: 'work', color: EVENT_COLORS.work },
+  { title: 'Bloque de Deep Work y Planificación', time: '10:00 - 12:30', desc: 'Resolución de problemas técnicos complejos', category: 'work', color: EVENT_COLORS.work },
+  { title: 'Cierre de Sprint y Documentación', time: '16:00 - 17:30', desc: 'Actualización de documentación y métricas de avance', category: 'work', color: EVENT_COLORS.work },
 ];
 
 // 4. Reuniones internas y con clientes
-const MEETING_EVENTS = [
-  { title: 'Reunión de Sincronización con Clientes', time: '10:30 - 11:30', desc: 'Demostración de hitos y avances de producto al cliente', color: EVENT_COLORS.meeting },
-  { title: 'Llamada de Estrategia con Cliente Principal', time: '15:00 - 16:00', desc: 'Negociación de requerimientos y próximas entregas', color: EVENT_COLORS.meeting },
-  { title: 'Reunión de Equipo & Daily Standup', time: '09:30 - 10:00', desc: 'Alineación de objetivos diarios entre desarrolladores', color: EVENT_COLORS.meeting },
-  { title: 'Presentación de Propuesta Comercial', time: '16:30 - 17:30', desc: 'Pitch de soluciones tecnológicas a nuevos clientes', color: EVENT_COLORS.meeting },
+const MEETING_EVENTS: EventTemplate[] = [
+  { title: 'Reunión de Sincronización con Clientes', time: '10:30 - 11:30', desc: 'Demostración de hitos y avances de producto al cliente', category: 'work', color: EVENT_COLORS.meeting },
+  { title: 'Llamada de Estrategia con Cliente Principal', time: '15:00 - 16:00', desc: 'Negociación de requerimientos y próximas entregas', category: 'important', color: EVENT_COLORS.important },
+  { title: 'Reunión de Equipo & Daily Standup', time: '09:30 - 10:00', desc: 'Alineación de objetivos diarios entre desarrolladores', category: 'work', color: EVENT_COLORS.meeting },
+  { title: 'Presentación de Propuesta Comercial', time: '16:30 - 17:30', desc: 'Pitch de soluciones tecnológicas a nuevos clientes', category: 'important', color: EVENT_COLORS.important },
 ];
 
 // 5. Amigos y vida social
-const SOCIAL_FRIENDS = [
-  { title: 'Salida de Cerveza y Charlas con Amigos', time: '19:30 - 22:00', desc: 'Encuentro con el grupo de amigos para desconectar', color: EVENT_COLORS.friends },
-  { title: 'Tarde de Juegos de Mesa con Amigos', time: '17:00 - 20:00', desc: 'Risas y partidas de estrategia con amigos de toda la vida', color: EVENT_COLORS.friends },
-  { title: 'Cena y Parrilla con el Grupo de Amigos', time: '20:30 - 23:30', desc: 'Asado en casa y anécdotas de la semana', color: EVENT_COLORS.friends },
-  { title: 'Cine & Café con Amistades', time: '18:30 - 21:00', desc: 'Estreno de película y debate post-función', color: EVENT_COLORS.friends },
+const SOCIAL_FRIENDS: EventTemplate[] = [
+  { title: 'Salida de Cerveza y Charlas con Amigos', time: '19:30 - 22:00', desc: 'Encuentro con el grupo de amigos para desconectar', category: 'personal', color: EVENT_COLORS.friends },
+  { title: 'Tarde de Juegos de Mesa con Amigos', time: '17:00 - 20:00', desc: 'Risas y partidas de estrategia con amigos de toda la vida', category: 'personal', color: EVENT_COLORS.friends },
+  { title: 'Cena y Parrilla con el Grupo de Amigos', time: '20:30 - 23:30', desc: 'Asado en casa y anécdotas de la semana', category: 'personal', color: EVENT_COLORS.friends },
+  { title: 'Cine & Café con Amistades', time: '18:30 - 21:00', desc: 'Estreno de película y debate post-función', category: 'personal', color: EVENT_COLORS.friends },
 ];
 
 // 6. Familia, esposa y parientes
-const FAMILY_EVENTS = [
-  { title: 'Cena Romántica con mi Esposa', time: '20:30 - 23:00', desc: 'Cena a la luz de las velas en nuestro restaurante preferido', color: EVENT_COLORS.family },
-  { title: 'Caminata y Paseo con mi Esposa', time: '18:00 - 19:30', desc: 'Paseo tranquilo al atardecer por el parque', color: EVENT_COLORS.family },
-  { title: 'Almuerzo Familiar de Domingo con Parientes', time: '13:30 - 16:30', desc: 'Reunión familiar con padres, hermanos y sobrinos', color: EVENT_COLORS.family },
-  { title: 'Visita a la Casa de los Padres', time: '17:00 - 19:30', desc: 'Tarde de té, charlas y actualización con la familia', color: EVENT_COLORS.family },
-  { title: 'Cumpleaños y Festejo Familiar', time: '19:00 - 22:30', desc: 'Celebración familiar especial con torta y brindis', color: EVENT_COLORS.family },
+const FAMILY_EVENTS: EventTemplate[] = [
+  { title: 'Cena Romántica con mi Esposa', time: '20:30 - 23:00', desc: 'Cena a la luz de las velas en nuestro restaurante preferido', category: 'personal', color: EVENT_COLORS.family },
+  { title: 'Caminata y Paseo con mi Esposa', time: '18:00 - 19:30', desc: 'Paseo tranquilo al atardecer por el parque', category: 'personal', color: EVENT_COLORS.family },
+  { title: 'Almuerzo Familiar de Domingo con Parientes', time: '13:30 - 16:30', desc: 'Reunión familiar con padres, hermanos y sobrinos', category: 'personal', color: EVENT_COLORS.family },
+  { title: 'Visita a la Casa de los Padres', time: '17:00 - 19:30', desc: 'Tarde de té, charlas y actualización con la familia', category: 'personal', color: EVENT_COLORS.family },
+  { title: 'Cumpleaños y Festejo Familiar', time: '19:00 - 22:30', desc: 'Celebración familiar especial con torta y brindis', category: 'important', color: EVENT_COLORS.important },
 ];
 
 // 7. Vacaciones y escapadas
-const VACATION_EVENTS = [
-  { title: 'Vacaciones de Verano en la Playa', time: 'Todo el día', desc: 'Día de descanso, sol y mar junto a la familia', color: EVENT_COLORS.vacation },
-  { title: 'Escapada de Fin de Semana a la Montaña', time: 'Todo el día', desc: 'Senderismo, aire puro y descanso en cabaña', color: EVENT_COLORS.vacation },
-  { title: 'Viaje Turístico & Descanso', time: 'Todo el día', desc: 'Exploración de paisajes y relajación total', color: EVENT_COLORS.vacation },
+const VACATION_EVENTS: EventTemplate[] = [
+  { title: 'Vacaciones de Verano en la Playa', time: 'Todo el día', desc: 'Día de descanso, sol y mar junto a la familia', category: 'personal', color: EVENT_COLORS.vacation },
+  { title: 'Escapada de Fin de Semana a la Montaña', time: 'Todo el día', desc: 'Senderismo, aire puro y descanso en cabaña', category: 'personal', color: EVENT_COLORS.vacation },
+  { title: 'Viaje Turístico & Descanso', time: 'Todo el día', desc: 'Exploración de paisajes y relajación total', category: 'personal', color: EVENT_COLORS.vacation },
 ];
 
 /**
@@ -109,6 +122,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: vacTemplate.time,
           description: vacTemplate.desc,
           color: vacTemplate.color,
+          category: vacTemplate.category,
         });
 
         // Actividad deportiva o familiar relajada en vacaciones
@@ -122,6 +136,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: sportOrFamily.time,
           description: sportOrFamily.desc,
           color: sportOrFamily.color,
+          category: sportOrFamily.category,
         });
 
         // Cena de vacaciones
@@ -133,6 +148,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: '21:00 - 23:00',
           description: 'Cena relajada descubriendo gastronomía local',
           color: EVENT_COLORS.meal,
+          category: 'personal',
         });
 
         continue;
@@ -149,6 +165,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: sport.time,
           description: sport.desc,
           color: sport.color,
+          category: sport.category,
         });
 
         // 2. Trabajo diario o Reunión con clientes
@@ -164,6 +181,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: workOrMeeting.time,
           description: workOrMeeting.desc,
           color: workOrMeeting.color,
+          category: workOrMeeting.category,
         });
 
         // 3. Tarde/Noche: Almuerzo/Cena, Amigos o Esposa/Familia
@@ -176,6 +194,7 @@ function generateRichMockEvents(): CalendarEvent[] {
             time: friends.time,
             description: friends.desc,
             color: friends.color,
+            category: friends.category,
           });
         } else if (day % 4 === 1 || day % 4 === 3) {
           const family = FAMILY_EVENTS[(day + month) % FAMILY_EVENTS.length];
@@ -186,6 +205,7 @@ function generateRichMockEvents(): CalendarEvent[] {
             time: family.time,
             description: family.desc,
             color: family.color,
+            category: family.category,
           });
         } else {
           const meal = MEAL_EVENTS[(day + month) % MEAL_EVENTS.length];
@@ -196,6 +216,7 @@ function generateRichMockEvents(): CalendarEvent[] {
             time: meal.time,
             description: meal.desc,
             color: meal.color,
+            category: meal.category,
           });
         }
       } 
@@ -214,6 +235,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: morningAct.time,
           description: morningAct.desc,
           color: morningAct.color,
+          category: morningAct.category,
         });
 
         // 2. Familia / Esposa / Parientes
@@ -225,6 +247,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: familyAct.time,
           description: familyAct.desc,
           color: familyAct.color,
+          category: familyAct.category,
         });
 
         // 3. Amigos o cena especial
@@ -239,6 +262,7 @@ function generateRichMockEvents(): CalendarEvent[] {
           time: socialOrDinner.time,
           description: socialOrDinner.desc,
           color: socialOrDinner.color,
+          category: socialOrDinner.category,
         });
       }
     }

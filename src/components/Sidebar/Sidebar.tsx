@@ -1,6 +1,11 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MONTH_NAMES_ES } from '../../utils/dateUtils';
+//INI SPEC-003 - 03
+// Importación de tipos de categorías y catálogo oficial
+import type { EventCategory } from '../../types/calendar';
+import { EVENT_CATEGORIES, ALL_CATEGORIES } from '../../utils/categoryUtils';
+//FIN SPEC-003 - 03
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -9,6 +14,11 @@ interface SidebarProps {
   eventCounts: number[];
   onYearChange: (newYear: number) => void;
   onMonthSelect: (monthIndex: number) => void;
+  //INI SPEC-003 - 03
+  // Filtros interactivos por categoría opcionales
+  activeCategories?: EventCategory[];
+  onToggleCategory?: (category: EventCategory) => void;
+  //FIN SPEC-003 - 03
 }
 
 //INI SPEC-001 - 04
@@ -19,6 +29,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   eventCounts,
   onYearChange,
   onMonthSelect,
+  //INI SPEC-003 - 03
+  // Propiedades de categorías con valores por defecto
+  activeCategories = ALL_CATEGORIES,
+  onToggleCategory,
+  //FIN SPEC-003 - 03
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -79,6 +94,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </ul>
+
+      {/* INI SPEC-003 - 03 */}
+      {/* Sección de filtros interactivos por categoría */}
+      <div className={styles.categoriesSection}>
+        <div className={styles.sectionTitle}>Categorías</div>
+        <div className={styles.categoriesList} role="group" aria-label="Filtro de categorías">
+          {EVENT_CATEGORIES.map((cat) => {
+            const isActive = activeCategories.includes(cat.id);
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                role="switch"
+                aria-checked={isActive}
+                aria-label={`Filtrar ${cat.label}`}
+                className={`${styles.categoryToggleBtn} ${isActive ? styles.categoryToggleActive : ''}`}
+                onClick={() => onToggleCategory?.(cat.id)}
+              >
+                <span
+                  className={styles.categoryToggleDot}
+                  style={{ backgroundColor: cat.color }}
+                  aria-hidden="true"
+                />
+                <span className={styles.categoryToggleLabel}>{cat.label}</span>
+                <span
+                  className={`${styles.categorySwitchTrack} ${isActive ? styles.switchTrackActive : ''}`}
+                  aria-hidden="true"
+                >
+                  <span className={styles.categorySwitchThumb} />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {/* FIN SPEC-003 - 03 */}
     </aside>
   );
 };

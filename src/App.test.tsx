@@ -1,13 +1,19 @@
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { App } from './App';
+//INI SPEC-003 - 07
+import dayjs from 'dayjs';
+import { MONTH_NAMES_ES } from './utils/dateUtils';
+//FIN SPEC-003 - 07
 
 beforeAll(() => {
   // Polyfill de <dialog> y Popover API para JSDOM
   HTMLDialogElement.prototype.showModal = function () {
+    this.open = true;
     this.setAttribute('open', '');
   };
   HTMLDialogElement.prototype.close = function () {
+    this.open = false;
     this.removeAttribute('open');
   };
   HTMLElement.prototype.showPopover = function () {
@@ -198,4 +204,108 @@ describe('App (Flujos de Integración)', () => {
     }
   });
   //FIN SPEC-002 - QA
+
+  //INI SPEC-003 - 07
+  it('filtra eventos en tiempo real mediante los switches de categoría y el buscador del Header', () => {
+    // Configuramos eventos de diferentes categorías para el día de hoy
+    const todayStr = dayjs().format('YYYY-MM-DD');
+    const testEvents = [
+      {
+        id: 'evt-work-1',
+        title: 'Reunión Proyecto Alfa',
+        date: todayStr,
+        startTime: '09:00',
+        endTime: '10:00',
+        time: '09:00 - 10:00',
+        category: 'work',
+        color: '#2563eb',
+      },
+      {
+        id: 'evt-personal-1',
+        title: 'Cumpleaños Familiar',
+        date: todayStr,
+        startTime: '14:00',
+        endTime: '16:00',
+        time: '14:00 - 16:00',
+        category: 'personal',
+        color: '#d97706',
+      },
+    ];
+    localStorage.setItem('calendar-events', JSON.stringify(testEvents));
+
+    render(<App />);
+
+    // Ambos eventos deben estar visibles en el DayPanel
+    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
+    expect(screen.getByText('Cumpleaños Familiar')).toBeTruthy();
+
+    // Desactivar la categoría Personal en el Sidebar
+    const personalSwitch = screen.getByRole('switch', { name: 'Filtrar Personal' });
+    fireEvent.click(personalSwitch);
+
+    // Cumpleaños Familiar ya no debe verse, pero Reunión Proyecto Alfa sí
+    expect(screen.queryByText('Cumpleaños Familiar')).toBeNull();
+    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
+
+    // Usar el buscador en vivo del Header
+    const searchInput = screen.getByRole('searchbox', { name: 'Buscar eventos' });
+    fireEvent.change(searchInput, { target: { value: 'Inexistente' } });
+
+    // Ahora no coincide ningún evento y se muestra el mensaje de estado vacío con botón de restablecer
+    expect(screen.queryByText('Reunión Proyecto Alfa')).toBeNull();
+    expect(
+      screen.getByText('No hay eventos que coincidan con los filtros o búsqueda activa.')
+    ).toBeTruthy();
+
+    // Restablecer filtros con el botón del estado vacío
+    const resetBtn = screen.getByRole('button', { name: 'Restablecer filtros' });
+    fireEvent.click(resetBtn);
+
+    // Los dos eventos vuelven a mostrarse
+    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
+    expect(screen.getByText('Cumpleaños Familiar')).toBeTruthy();
+  });
+
+  it('soporta atajos de teclado globales (N, ←, →, T) y los ignora cuando se edita un campo', () => {
+    render(<App />);
+
+    const eventDialog = document.querySelector('dialog[aria-labelledby="event-modal-title"]');
+    expect(eventDialog?.hasAttribute('open')).toBe(false);
+
+    // 1. Atajo 'N' abre el modal de nuevo evento
+    fireEvent.keyDown(window, { key: 'n' });
+    expect(eventDialog?.hasAttribute('open')).toBe(true);
+
+    // Cerrar el modal con el botón Cancelar
+    const cancelBtn = screen.getByRole('button', { name: 'Cancelar' });
+    fireEvent.click(cancelBtn);
+    expect(eventDialog?.hasAttribute('open')).toBe(false);
+
+    // 2. Atajos 'ArrowRight' y 'ArrowLeft' navegan de mes
+    const initialMonth = dayjs().month();
+    const nextMonthIndex = (initialMonth + 1) % 12;
+    const nextMonthName = MONTH_NAMES_ES[nextMonthIndex];
+    const sidebar = screen.getByRole('listbox', { name: 'Meses del año' });
+
+    // Presionar ArrowRight navega al mes siguiente
+    fireEvent.keyDown(window, { key: 'ArrowRight' });
+    const nextMonthLi = within(sidebar).getByText(nextMonthName).closest('li');
+    expect(nextMonthLi?.className).toContain('active');
+
+    // Presionar 't' para volver al día de hoy
+    fireEvent.keyDown(window, { key: 't' });
+    const currentMonthName = MONTH_NAMES_ES[initialMonth];
+    const currentMonthLi = within(sidebar).getByText(currentMonthName).closest('li');
+    expect(currentMonthLi?.className).toContain('active');
+
+    // 3. Cuando el foco está en un campo de texto, los atajos no deben activarse
+    const searchInput = screen.getByRole('searchbox', { name: 'Buscar eventos' });
+    searchInput.focus();
+
+    // Disparar tecla 'n' en el input
+    fireEvent.keyDown(searchInput, { key: 'n' });
+    // El diálogo de nuevo evento NO debe abrirse
+    expect(eventDialog?.hasAttribute('open')).toBe(false);
+  });
+  //FIN SPEC-003 - 07
 });

@@ -1,6 +1,10 @@
 import React, { useRef } from 'react';
 import dayjs from 'dayjs';
-import type { CalendarEvent } from '../../types/calendar';
+//INI SPEC-003 - 02
+// Tipos y utilidades para categorización en formulario
+import type { CalendarEvent, EventCategory } from '../../types/calendar';
+import { resolveEventCategory, getCategoryMeta, DEFAULT_CATEGORY } from '../../utils/categoryUtils';
+//FIN SPEC-003 - 02
 import {
   findDuplicate,
   formatEventTime,
@@ -11,7 +15,9 @@ import {
 } from '../../utils/eventValidation';
 import type { NewEventData } from '../EventFormModal/EventFormModal';
 
-const DEFAULT_EVENT_COLOR = '#48a999';
+//INI SPEC-003 - 02
+// Los colores por defecto ahora se resuelven mediante getCategoryMeta(selectedCategory).color
+//FIN SPEC-003 - 02
 export const FIELD_ORDER: (keyof EventFormValues)[] = [
   'title',
   'description',
@@ -35,14 +41,28 @@ export const useEventForm = ({
   onSave,
   onDirtyChange,
 }: UseEventFormOptions) => {
-  const [values, setValues] = React.useState<EventFormValues>(initialValues);
+  //INI SPEC-003 - 02
+  // Inicialización de categoría del evento y soporte en estado
+  const initialCategory: EventCategory =
+    initialValues.category ?? (event ? resolveEventCategory(event) : DEFAULT_CATEGORY);
+
+  const [values, setValues] = React.useState<EventFormValues>({
+    ...initialValues,
+    category: initialCategory,
+  });
+  //FIN SPEC-003 - 02
   const [touched, setTouched] = React.useState<Partial<Record<keyof EventFormValues, boolean>>>({});
   const [submitted, setSubmitted] = React.useState(false);
   const submittingRef = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   const errors: EventFormErrors = validateEventForm(values);
-  const isDirty = FIELD_ORDER.some((k) => values[k] !== initialValues[k]);
+  //INI SPEC-003 - 02
+  // Detección de cambios considerando campos base y categoría seleccionada
+  const isDirty =
+    FIELD_ORDER.some((k) => values[k] !== initialValues[k]) ||
+    (values.category ?? DEFAULT_CATEGORY) !== initialCategory;
+  //FIN SPEC-003 - 02
   const isPast = !errors.date && dayjs(values.date).isBefore(dayjs(), 'day');
   const duplicate =
     !errors.title && !errors.date
@@ -61,6 +81,13 @@ export const useEventForm = ({
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setValues((prev) => ({ ...prev, [field]: e.target.value }));
 
+  //INI SPEC-003 - 02
+  // Manejador específico para cambiar de categoría
+  const setCategory = (category: EventCategory) => {
+    setValues((prev) => ({ ...prev, category }));
+  };
+  //FIN SPEC-003 - 02
+
   const markTouched = (field: keyof EventFormValues) => () =>
     setTouched((prev) => ({ ...prev, [field]: true }));
 
@@ -74,13 +101,20 @@ export const useEventForm = ({
     }
     if (submittingRef.current) return; // Evita doble envío
     submittingRef.current = true;
+    //INI SPEC-003 - 02
+    // Sincroniza la categoría y el color semántico oficial al guardar
+    const selectedCategory: EventCategory = values.category ?? initialCategory;
+    const categoryMeta = getCategoryMeta(selectedCategory);
+
     onSave({
       title: normalizeTitle(values.title),
       date: values.date,
       time: formatEventTime(values.startTime, values.endTime),
       description: values.description.trim() || undefined,
-      color: event?.color ?? DEFAULT_EVENT_COLOR,
+      category: selectedCategory,
+      color: categoryMeta.color,
     });
+    //FIN SPEC-003 - 02
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
@@ -107,6 +141,9 @@ export const useEventForm = ({
     isPast,
     duplicate,
     setField,
+    //INI SPEC-003 - 02
+    setCategory,
+    //FIN SPEC-003 - 02
     fieldProps,
     showError,
     handleSubmit,

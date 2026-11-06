@@ -1,5 +1,9 @@
 import React from 'react';
 import type { CalendarEvent } from '../../types/calendar';
+//INI SPEC-003 - 02
+// Importación de categorías oficiales para selector de formulario
+import { EVENT_CATEGORIES } from '../../utils/categoryUtils';
+//FIN SPEC-003 - 02
 import {
   DATE_MAX,
   DATE_MIN,
@@ -37,6 +41,9 @@ export const EventForm: React.FC<EventFormProps> = ({
     isPast,
     duplicate,
     setField,
+    //INI SPEC-003 - 02
+    setCategory,
+    //FIN SPEC-003 - 02
     fieldProps,
     showError,
     handleSubmit,
@@ -70,6 +77,54 @@ export const EventForm: React.FC<EventFormProps> = ({
         autoComplete="off"
         placeholder="Ej: Reunión con el equipo"
       />
+
+      {/* INI SPEC-003 - 02 */}
+      {/* Selector accesible de categorías con radiogroup y píldoras interactivas */}
+      <div className={styles.categoryField}>
+        <span className={styles.categoryGroupLabel}>
+          Categoría
+        </span>
+        <div
+          role="radiogroup"
+          aria-label="Categoría del evento"
+          className={styles.categoryGrid}
+        >
+          {EVENT_CATEGORIES.map((cat) => {
+            const isSelected = (values.category ?? 'work') === cat.id;
+            return (
+              <label
+                key={cat.id}
+                className={`${styles.categoryOption} ${isSelected ? styles.categoryOptionSelected : ''}`}
+                style={
+                  isSelected
+                    ? ({
+                        '--cat-active-bg': cat.bgVar,
+                        '--cat-active-text': cat.textVar,
+                        '--cat-active-dot': cat.dotVar,
+                      } as React.CSSProperties)
+                    : undefined
+                }
+              >
+                <input
+                  type="radio"
+                  name="category"
+                  value={cat.id}
+                  checked={isSelected}
+                  onChange={() => setCategory(cat.id)}
+                  className={styles.categoryRadioInput}
+                />
+                <span
+                  className={styles.categoryDot}
+                  style={{ backgroundColor: cat.color }}
+                  aria-hidden="true"
+                />
+                <span className={styles.categoryLabel}>{cat.label}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+      {/* FIN SPEC-003 - 02 */}
 
       <FormTextareaField
         {...fieldProps('description')}

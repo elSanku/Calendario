@@ -52,6 +52,17 @@ describe('validateEventForm', () => {
     expect(valido.startTime).toBeUndefined();
     expect(valido.endTime).toBeUndefined();
   });
+
+  //INI SPEC-003 - 02
+  it('valida que la categoría seleccionada sea una de las permitidas si se proporciona', () => {
+    // @ts-expect-error probando valor arbitrario no válido
+    const errorInvalido = validateEventForm({ ...base, category: 'invalida' });
+    expect(errorInvalido.category).toBe('La categoría seleccionada no es válida.');
+
+    const valido = validateEventForm({ ...base, category: 'health' });
+    expect(valido.category).toBeUndefined();
+  });
+  //FIN SPEC-003 - 02
 });
 
 describe('utilidades', () => {
@@ -82,6 +93,19 @@ describe('utilidades', () => {
     ]);
     expect(result.map((e) => e.id)).toEqual(['1', '4', '5']);
   });
+
+  //INI SPEC-003 - 02
+  it('resuelve y preserva category en sanitizeEvents para eventos existentes y nuevos', () => {
+    const sanitized = sanitizeEvents([
+      { id: '1', title: 'Evento con categoría explícita', date: '2026-11-06', category: 'health' },
+      { id: '2', title: 'Evento legado con color', date: '2026-11-06', color: '#e74c3c' },
+      { id: '3', title: 'Evento sin color ni categoría', date: '2026-11-06' },
+    ]);
+    expect(sanitized[0].category).toBe('health');
+    expect(sanitized[1].category).toBe('important');
+    expect(sanitized[2].category).toBe('work');
+  });
+  //FIN SPEC-003 - 02
 
   it('ordena: todo el día primero y luego por hora', () => {
     const sorted = sortEventsByTime([

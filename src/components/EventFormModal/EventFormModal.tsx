@@ -1,13 +1,22 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { X } from 'lucide-react';
-import type { CalendarEvent } from '../../types/calendar';
+//INI SPEC-003 - 02
+// Tipos de categorías y resolución para el modal
+import type { CalendarEvent, EventCategory } from '../../types/calendar';
+import { resolveEventCategory, DEFAULT_CATEGORY } from '../../utils/categoryUtils';
+//FIN SPEC-003 - 02
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 import { parseEventTime, type EventFormValues } from '../../utils/eventValidation';
 import { EventForm } from './EventForm';
 import styles from './EventFormModal.module.css';
 
-export type NewEventData = Omit<CalendarEvent, 'id'>;
+//INI SPEC-003 - 02
+// Interfaz de nuevo evento con categoría tipada
+export type NewEventData = Omit<CalendarEvent, 'id'> & {
+  category?: EventCategory;
+};
+//FIN SPEC-003 - 02
 
 export interface EventFormModalProps {
   isOpen: boolean;
@@ -67,6 +76,10 @@ export const EventFormModal: React.FC<EventFormModalProps> = ({
     date: event?.date ?? defaultDate ?? dayjs().format('YYYY-MM-DD'),
     startTime,
     endTime,
+    //INI SPEC-003 - 02
+    // Inicialización de categoría de evento o por defecto 'work'
+    category: event ? resolveEventCategory(event) : DEFAULT_CATEGORY,
+    //FIN SPEC-003 - 02
   };
 
   return (

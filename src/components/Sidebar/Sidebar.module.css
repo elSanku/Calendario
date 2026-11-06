@@ -11,6 +11,10 @@
   flex-shrink: 0;
   border-right: 1px solid var(--border-subtle);
   height: 100%;
+  /* INI SPEC-003 - 03 */
+  /* Scroll vertical para vistas compactas y drawers */
+  overflow-y: auto;
+  /* FIN SPEC-003 - 03 */
 }
 
 .yearSelector {
@@ -110,6 +114,10 @@
   background-color: var(--bg-subtle);
   color: var(--text-secondary);
   transition: background-color 0.2s, color 0.2s;
+  /* INI SPEC-003 - 03 */
+  /* Alineación numérica limpia */
+  font-variant-numeric: tabular-nums;
+  /* FIN SPEC-003 - 03 */
 }
 
 .badgeActive {
@@ -126,3 +134,121 @@
   }
 }
 /* FIN SPEC-001 - 04 */
+
+/* INI SPEC-003 - 03 */
+/* Sección de filtros interactivos por categoría Soft UI */
+.categoriesSection {
+  margin-top: 16px;
+  padding: 16px 10px 0 10px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  padding: 0 6px 2px 6px;
+}
+
+.categoriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.categoryToggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 10px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, opacity 0.2s;
+  opacity: 0.55;
+}
+
+.categoryToggleBtn:hover {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  opacity: 0.85;
+}
+
+.categoryToggleBtn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -1px;
+}
+
+.categoryToggleActive {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+  font-weight: 600;
+  opacity: 1;
+  border-color: var(--border-subtle);
+}
+
+.categoryToggleDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.categoryToggleActive .categoryToggleDot {
+  transform: scale(1.15);
+}
+
+.categoryToggleLabel {
+  flex: 1;
+}
+
+.categorySwitchTrack {
+  width: 26px;
+  height: 15px;
+  border-radius: 999px;
+  background-color: var(--border-strong);
+  position: relative;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.switchTrackActive {
+  background-color: var(--accent-primary);
+}
+
+.categorySwitchThumb {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switchTrackActive .categorySwitchThumb {
+  transform: translateX(11px);
+}
+
+@media (max-width: 960px) {
+  .categoriesSection {
+    margin-top: 14px;
+    padding: 14px 10px 24px 10px;
+  }
+}
+/* FIN SPEC-003 - 03 */

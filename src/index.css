@@ -51,6 +51,29 @@ body {
 }
 /* FIN SPEC-001 - 01 */
 
+/* INI SPEC-003 - 01 */
+/* Tokens semánticos de categorías con alto contraste WCAG AAA y tipografía numérica tabular */
+:root {
+  --cat-work-bg: #e8f1f8;
+  --cat-work-text: #1e4e79;
+  --cat-work-dot: #2b6cb0;
+
+  --cat-personal-bg: #eaf5ee;
+  --cat-personal-text: #1b5e3a;
+  --cat-personal-dot: #2f855a;
+
+  --cat-health-bg: #f3eef8;
+  --cat-health-text: #55307d;
+  --cat-health-dot: #6b46c1;
+
+  --cat-important-bg: #fdecec;
+  --cat-important-text: #9b1c1c;
+  --cat-important-dot: #c53030;
+
+  --font-tabular: tabular-nums;
+}
+/* FIN SPEC-003 - 01 */
+
 button {
   font-family: inherit;
 }

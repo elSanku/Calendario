@@ -185,6 +185,182 @@
   outline-offset: 3px;
 }
 
+/* INI SPEC-003 - 06 */
+/* Estilos para la línea de tiempo estructurada, etiquetas de categorías y estados vacíos */
+.emptyStateMessage {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.emptyStateBtn {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-soft-sm);
+}
+
+.emptyStateBtn:hover {
+  background-color: var(--accent-light);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.emptyStateBtn:active {
+  transform: translateY(0);
+}
+
+.emptyStateBtn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.timelineList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.timelineItem {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.timelineTrack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+  flex-shrink: 0;
+  padding-top: 10px;
+}
+
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px var(--bg-surface);
+  z-index: 1;
+}
+
+.timelineLine {
+  width: 2px;
+  flex: 1;
+  background-color: var(--border-subtle);
+  margin-top: 4px;
+  margin-bottom: -14px;
+}
+
+.timelineItem:last-child .timelineLine {
+  display: none;
+}
+
+.eventCard {
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-soft-sm);
+  border: 1px solid var(--border-subtle);
+  border-left-width: 4px;
+  flex: 1;
+  min-width: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+
+.eventCard:hover {
+  box-shadow: var(--shadow-soft-md);
+  transform: translateY(-1px);
+}
+
+.eventCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.categoryBadgeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.eventCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.eventTitle {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  word-break: break-word;
+  white-space: normal;
+  max-width: none;
+}
+
+.timeBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.timeText {
+  font-variant-numeric: tabular-nums;
+}
+
+.eventDescription {
+  margin: 3px 0 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+/* FIN SPEC-003 - 06 */
+
 @media (max-width: 960px) {
   .dayPanel {
     width: 290px;

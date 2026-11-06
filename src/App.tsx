@@ -19,6 +19,11 @@ import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 import type { Holiday, HolidaysMap } from './types/holiday';
 import { fetchHolidaysForYear, createHolidaysMap } from './utils/holidaysApi';
 //FIN SPEC-002 - 06
+//INI SPEC-003 - 07
+// Tipos de categorías y utilidades de filtrado reactivo
+import type { EventCategory } from './types/calendar';
+import { ALL_CATEGORIES, filterEvents } from './utils/categoryUtils';
+//FIN SPEC-003 - 07
 import styles from './App.module.css';
 
 const EVENTS_STORAGE_KEY = 'calendar-events';
@@ -75,6 +80,28 @@ export const App: React.FC = () => {
   // Evento pendiente de confirmación para eliminar
   const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
 
+  //INI SPEC-003 - 07
+  // Estados para filtros de categorías y buscador en vivo
+  const [activeCategories, setActiveCategories] = useState<EventCategory[]>(ALL_CATEGORIES);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const handleToggleCategory = (category: EventCategory) => {
+    setActiveCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    );
+  };
+
+  const handleResetFilters = () => {
+    setActiveCategories(ALL_CATEGORIES);
+    setSearchQuery('');
+  };
+
+  // Cálculo reactivo de eventos filtrados para toda la interfaz
+  const filteredEvents = useMemo(() => {
+    return filterEvents(events, activeCategories, searchQuery);
+  }, [events, activeCategories, searchQuery]);
+  //FIN SPEC-003 - 07
+
   //INI SPEC-002 - 06
   // Estado para feriados nacionales oficiales del año visualizado
   const [holidays, setHolidays] = useState<Holiday[]>([]);
@@ -127,22 +154,37 @@ export const App: React.FC = () => {
   };
 
   // Conteo de eventos por mes para el año visualizado
+  //INI SPEC-003 - 07
+  // Conteo reactivo derivado de eventos filtrados
   const eventCounts = useMemo(() => {
-    return getEventCountsByMonth(currentYear, events);
-  }, [currentYear, events]);
+    return getEventCountsByMonth(currentYear, filteredEvents);
+  }, [currentYear, filteredEvents]);
+  //FIN SPEC-003 - 07
 
   // Celdas de la cuadrícula de 42 días
   const gridCells = useMemo(() => {
     //INI SPEC-002 - 06
     // Inyectar el mapa de feriados a la cuadrícula de 42 celdas
-    return generateMonthGrid(currentYear, currentMonthIndex, selectedDateStr, events, holidaysMap);
+    //INI SPEC-003 - 07
+    // Reemplazar events por filteredEvents para reflejar filtros y búsqueda en vivo
+    return generateMonthGrid(
+      currentYear,
+      currentMonthIndex,
+      selectedDateStr,
+      filteredEvents,
+      holidaysMap
+    );
+    //FIN SPEC-003 - 07
     //FIN SPEC-002 - 06
-  }, [currentYear, currentMonthIndex, selectedDateStr, events, holidaysMap]);
+  }, [currentYear, currentMonthIndex, selectedDateStr, filteredEvents, holidaysMap]);
 
   // Eventos correspondientes al día seleccionado
+  //INI SPEC-003 - 07
+  // Eventos del día seleccionado derivados de filteredEvents
   const selectedDayEvents = useMemo(() => {
-    return sortEventsByTime(events.filter((e) => e.date === selectedDateStr));
-  }, [selectedDateStr, events]);
+    return sortEventsByTime(filteredEvents.filter((e) => e.date === selectedDateStr));
+  }, [selectedDateStr, filteredEvents]);
+  //FIN SPEC-003 - 07
 
   // Manejador para cambio de año
   const handleYearChange = (newYear: number) => {
@@ -197,6 +239,72 @@ export const App: React.FC = () => {
     setIsEventModalOpen(true);
   };
 
+  //INI SPEC-003 - 07
+  // Navegación mensual rápida y botón Hoy
+  const handlePrevMonth = () => {
+    setCurrentMonthIndex((prev) => {
+      if (prev === 0) {
+        setCurrentYear((y) => y - 1);
+        return 11;
+      }
+      return prev - 1;
+    });
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonthIndex((prev) => {
+      if (prev === 11) {
+        setCurrentYear((y) => y + 1);
+        return 0;
+      }
+      return prev + 1;
+    });
+  };
+
+  const handleGoToToday = () => {
+    const now = dayjs();
+    setCurrentYear(now.year());
+    setCurrentMonthIndex(now.month());
+    setSelectedDateStr(now.format('YYYY-MM-DD'));
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignorar si hay modales o diálogos abiertos
+      if (isEventModalOpen || deletingEvent !== null) return;
+
+      // Ignorar si el foco está en un campo editable
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tagName = target.tagName;
+        if (
+          tagName === 'INPUT' ||
+          tagName === 'TEXTAREA' ||
+          tagName === 'SELECT' ||
+          target.isContentEditable
+        ) {
+          return;
+        }
+      }
+
+      if (e.key === 't' || e.key === 'T') {
+        handleGoToToday();
+      } else if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault();
+        setEditingEvent(null);
+        setIsEventModalOpen(true);
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevMonth();
+      } else if (e.key === 'ArrowRight') {
+        handleNextMonth();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isEventModalOpen, deletingEvent]);
+  //FIN SPEC-003 - 07
+
   return (
     <div className={styles.appContainer}>
       <div className={styles.calendarCard}>
@@ -225,19 +333,41 @@ export const App: React.FC = () => {
 
         {/* Sidebar con navegación de año y meses envuelto en drawer para móvil */}
         <div className={`${styles.sidebarWrapper} ${isSidebarDrawerOpen ? styles.open : ''}`}>
+          {/* INI SPEC-003 - 07 */}
           <Sidebar
             year={currentYear}
             selectedMonth={currentMonthIndex}
             eventCounts={eventCounts}
             onYearChange={handleYearChange}
             onMonthSelect={handleMonthSelect}
+            activeCategories={activeCategories}
+            onToggleCategory={handleToggleCategory}
           />
+          {/* FIN SPEC-003 - 07 */}
         </div>
 
         {/* Área Central: Header + Cuadrícula mensual */}
         <main className={styles.centerArea}>
-          <Header />
-          <CalendarGrid cells={gridCells} onSelectDay={handleSelectDay} />
+          {/* INI SPEC-003 - 07 */}
+          <Header
+            currentMonthIndex={currentMonthIndex}
+            currentYear={currentYear}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onToday={handleGoToToday}
+            onNewEvent={() => {
+              setEditingEvent(null);
+              setIsEventModalOpen(true);
+            }}
+          />
+          <CalendarGrid
+            cells={gridCells}
+            onSelectDay={handleSelectDay}
+            onEditEvent={handleEditEvent}
+          />
+          {/* FIN SPEC-003 - 07 */}
         </main>
 
         {/* Panel lateral derecho: Detalle del día y botón + envuelto en drawer para móvil */}
@@ -249,7 +379,16 @@ export const App: React.FC = () => {
             // Inyectar el feriado correspondiente a la fecha seleccionada
             holiday={holidaysMap[selectedDateStr] || null}
             //FIN SPEC-002 - 06
-            onAddEventClick={() => setIsEventModalOpen(true)}
+            //INI SPEC-003 - 07
+            hasActiveFilters={
+              activeCategories.length < ALL_CATEGORIES.length || searchQuery.trim().length > 0
+            }
+            onResetFilters={handleResetFilters}
+            onAddEventClick={() => {
+              setEditingEvent(null);
+              setIsEventModalOpen(true);
+            }}
+            //FIN SPEC-003 - 07
             onEditEvent={handleEditEvent}
             onDeleteEvent={setDeletingEvent}
           />
