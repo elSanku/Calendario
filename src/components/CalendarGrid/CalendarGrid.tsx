@@ -37,12 +37,20 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ cells, onSelectDay }
             !cell.isCurrentMonth ? styles.otherMonth : '',
             cell.isSelected ? styles.selected : '',
             cell.isToday ? styles.today : '',
+            //INI SPEC-002 - 04
+            // Clase para destacar los días feriados con fondo ámbar claro
+            cell.holiday ? styles.holidayCell : '',
+            //FIN SPEC-002 - 04
           ]
             .filter(Boolean)
             .join(' ');
 
           const eventCount = cell.events.length;
-          const label = `${cell.dayNumber}${eventCount > 0 ? `, ${eventCount} evento(s)` : ''}${cell.isToday ? ', Hoy' : ''}`;
+          //INI SPEC-002 - 04
+          // Enriquecer label accesible con información del feriado si existe
+          const holidayLabel = cell.holiday ? `, Feriado: ${cell.holiday.title}` : '';
+          const label = `${cell.dayNumber}${holidayLabel}${eventCount > 0 ? `, ${eventCount} evento(s)` : ''}${cell.isToday ? ', Hoy' : ''}`;
+          //FIN SPEC-002 - 04
 
           return (
             <div
@@ -55,7 +63,22 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ cells, onSelectDay }
               aria-label={label}
               aria-pressed={cell.isSelected}
             >
-              <span className={styles.dayNumber}>{cell.dayNumber}</span>
+              {/* INI SPEC-002 - 04 */}
+              {/* Cabecera de celda con número y píldora sutil de feriado */}
+              <div className={styles.cellHeader}>
+                <span className={styles.dayNumber}>{cell.dayNumber}</span>
+                {cell.holiday && (
+                  <span
+                    className={`${styles.holidayPill} ${cell.isSelected ? styles.holidayPillSelected : ''}`}
+                    title={`Feriado: ${cell.holiday.title}`}
+                    data-testid="holiday-pill"
+                  >
+                    <span className={styles.holidayDot} aria-hidden="true" />
+                    <span className={styles.holidayText}>{cell.holiday.title}</span>
+                  </span>
+                )}
+              </div>
+              {/* FIN SPEC-002 - 04 */}
 
               {/* Puntos (dots) de eventos y badge +N si hay saturación */}
               {eventCount > 0 && (

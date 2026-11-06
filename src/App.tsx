@@ -14,6 +14,11 @@ import { generateId, sanitizeEvents, sortEventsByTime } from './utils/eventValid
 // Iconos para barra de navegación en vista móvil
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 //FIN SPEC-001 - 02
+//INI SPEC-002 - 06
+// Importaciones para sincronización dinámica de feriados nacionales
+import type { Holiday, HolidaysMap } from './types/holiday';
+import { fetchHolidaysForYear, createHolidaysMap } from './utils/holidaysApi';
+//FIN SPEC-002 - 06
 import styles from './App.module.css';
 
 const EVENTS_STORAGE_KEY = 'calendar-events';
@@ -70,6 +75,32 @@ export const App: React.FC = () => {
   // Evento pendiente de confirmación para eliminar
   const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
 
+  //INI SPEC-002 - 06
+  // Estado para feriados nacionales oficiales del año visualizado
+  const [holidays, setHolidays] = useState<Holiday[]>([]);
+
+  useEffect(() => {
+    let isActive = true;
+    const controller = new AbortController();
+
+    fetchHolidaysForYear(currentYear, controller.signal).then((data) => {
+      if (isActive) {
+        setHolidays(data);
+      }
+    });
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [currentYear]);
+
+  // Mapa reactivo de feriados por fecha YYYY-MM-DD para lookup O(1)
+  const holidaysMap: HolidaysMap = useMemo(() => {
+    return createHolidaysMap(holidays);
+  }, [holidays]);
+  //FIN SPEC-002 - 06
+
   //INI SPEC-001 - 02
   // Estados para drawers colapsables en móvil
   const [isSidebarDrawerOpen, setIsSidebarDrawerOpen] = useState<boolean>(false);
@@ -102,8 +133,11 @@ export const App: React.FC = () => {
 
   // Celdas de la cuadrícula de 42 días
   const gridCells = useMemo(() => {
-    return generateMonthGrid(currentYear, currentMonthIndex, selectedDateStr, events);
-  }, [currentYear, currentMonthIndex, selectedDateStr, events]);
+    //INI SPEC-002 - 06
+    // Inyectar el mapa de feriados a la cuadrícula de 42 celdas
+    return generateMonthGrid(currentYear, currentMonthIndex, selectedDateStr, events, holidaysMap);
+    //FIN SPEC-002 - 06
+  }, [currentYear, currentMonthIndex, selectedDateStr, events, holidaysMap]);
 
   // Eventos correspondientes al día seleccionado
   const selectedDayEvents = useMemo(() => {
@@ -211,6 +245,10 @@ export const App: React.FC = () => {
           <DayPanel
             selectedDateStr={selectedDateStr}
             events={selectedDayEvents}
+            //INI SPEC-002 - 06
+            // Inyectar el feriado correspondiente a la fecha seleccionada
+            holiday={holidaysMap[selectedDateStr] || null}
+            //FIN SPEC-002 - 06
             onAddEventClick={() => setIsEventModalOpen(true)}
             onEditEvent={handleEditEvent}
             onDeleteEvent={setDeletingEvent}

@@ -45,5 +45,27 @@ describe('DayPanel', () => {
     fireEvent.click(addBtn);
     expect(onAddEventClick).toHaveBeenCalledTimes(1);
   });
+
+  //INI SPEC-002 - 05
+  it('renderiza el banner conmemorativo cuando se proporciona un feriado oficial', () => {
+    const holiday = {
+      id: 1,
+      date: defaultDateStr,
+      title: 'Día de las Iglesias Evangélicas y Protestantes',
+    };
+
+    render(<DayPanel selectedDateStr={defaultDateStr} events={[]} holiday={holiday} />);
+
+    const banner = screen.getByTestId('holiday-banner');
+    expect(banner).toBeTruthy();
+    expect(screen.getByText('Feriado Oficial')).toBeTruthy();
+    expect(screen.getByText('Día de las Iglesias Evangélicas y Protestantes')).toBeTruthy();
+  });
+
+  it('no renderiza el banner de feriado cuando holiday es null o undefined', () => {
+    render(<DayPanel selectedDateStr={defaultDateStr} events={[]} holiday={null} />);
+    expect(screen.queryByTestId('holiday-banner')).toBeNull();
+  });
+  //FIN SPEC-002 - 05
 });
 

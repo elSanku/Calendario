@@ -6,12 +6,17 @@
   flex-direction: column;
   padding: 24px 28px;
   background-color: var(--bg-surface-elevated);
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .weekHeader {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
   margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .weekdayName {
@@ -26,11 +31,15 @@
 
 .daysGrid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
   gap: 6px;
   background-color: transparent;
   flex: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .dayCell {
@@ -38,7 +47,8 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   min-height: 68px;
-  padding: 8px 10px;
+  height: 100%;
+  padding: 6px 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -46,6 +56,9 @@
   position: relative;
   box-shadow: var(--shadow-soft-sm);
   transition: background-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .dayCell:hover {
@@ -69,6 +82,82 @@
   color: var(--text-primary);
   line-height: 1;
 }
+
+/* INI SPEC-002 - 04 */
+/* Celda con Feriado Nacional: fondo ámbar claro distinguible */
+.holidayCell:not(.selected) {
+  background-color: #fff8f0;
+  border-color: rgba(200, 110, 40, 0.22);
+  box-shadow: 0 1px 3px rgba(200, 110, 40, 0.06), var(--shadow-soft-sm);
+}
+
+.holidayCell:not(.selected):hover {
+  background-color: #fcefdc;
+  border-color: rgba(200, 110, 40, 0.35);
+  box-shadow: 0 3px 8px rgba(200, 110, 40, 0.1), var(--shadow-soft-md);
+}
+
+.holidayCell.otherMonth:not(.selected) {
+  background-color: #fcf6ef;
+  opacity: 0.6;
+}
+
+.holidayCell:not(.selected) .dayNumber {
+  color: #92400e;
+  font-weight: 700;
+}
+
+/* Cabecera de celda y píldora sutil de feriado nacional */
+.cellHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.holidayPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: rgba(200, 90, 50, 0.14);
+  color: #9a3412;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  line-height: 1.15;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.holidayPillSelected {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: var(--accent-contrast);
+}
+
+.holidayDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.holidayText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  display: block;
+  flex: 1;
+}
+/* FIN SPEC-002 - 04 */
 
 .otherMonth {
   background-color: var(--bg-canvas);
@@ -137,15 +226,33 @@
   .gridContainer {
     padding: 12px 10px;
   }
+  .weekHeader {
+    gap: 4px;
+  }
   .daysGrid {
     gap: 4px;
   }
   .dayCell {
     min-height: 52px;
-    padding: 6px 6px;
+    padding: 6px 4px;
   }
   .dayNumber {
     font-size: 0.85rem;
   }
+  /* INI SPEC-002 - 04 */
+  .cellHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .holidayText {
+    display: none;
+  }
+  .holidayPill {
+    padding: 3px;
+    border-radius: 50%;
+    width: auto;
+  }
+  /* FIN SPEC-002 - 04 */
 }
 /* FIN SPEC-001 - 05 */

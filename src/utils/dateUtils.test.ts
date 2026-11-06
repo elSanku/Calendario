@@ -68,4 +68,20 @@ describe('dateUtils', () => {
     expect(header.title).toBe('OCTUBRE 30');
     expect(header.subtitle).toBe('Viernes');
   });
+
+  //INI SPEC-002 - 03
+  it('debe asignar el feriado correspondiente a la celda cuando se provee holidaysMap', () => {
+    const mockHolidaysMap = {
+      '2026-10-12': { id: 10, date: '2026-10-12', title: 'Encuentro de Dos Mundos' },
+    };
+    const cells = generateMonthGrid(2026, 9, '2026-10-30', [], mockHolidaysMap);
+
+    const holidayCell = cells.find((c) => c.date === '2026-10-12');
+    expect(holidayCell?.holiday).toBeDefined();
+    expect(holidayCell?.holiday?.title).toBe('Encuentro de Dos Mundos');
+
+    const normalCell = cells.find((c) => c.date === '2026-10-13');
+    expect(normalCell?.holiday).toBeUndefined();
+  });
+  //FIN SPEC-002 - 03
 });

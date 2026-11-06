@@ -1,5 +1,9 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
+//INI SPEC-002 - 05
+// Importación de icono conmemorativo y tipos de feriado
+import { Plus, Sparkles } from 'lucide-react';
+import type { Holiday } from '../../types/holiday';
+//FIN SPEC-002 - 05
 import { EventActionsMenu } from '../EventActionsMenu/EventActionsMenu';
 import type { CalendarEvent } from '../../types/calendar';
 import { formatDayPanelHeader } from '../../utils/dateUtils';
@@ -8,6 +12,10 @@ import styles from './DayPanel.module.css';
 interface DayPanelProps {
   selectedDateStr: string;
   events: CalendarEvent[];
+  //INI SPEC-002 - 05
+  // Feriado nacional del día seleccionado si existe
+  holiday?: Holiday | null;
+  //FIN SPEC-002 - 05
   onAddEventClick?: () => void;
   onEditEvent?: (event: CalendarEvent) => void;
   onDeleteEvent?: (event: CalendarEvent) => void;
@@ -18,6 +26,9 @@ interface DayPanelProps {
 export const DayPanel: React.FC<DayPanelProps> = ({
   selectedDateStr,
   events,
+  //INI SPEC-002 - 05
+  holiday,
+  //FIN SPEC-002 - 05
   onAddEventClick,
   onEditEvent,
   onDeleteEvent,
@@ -31,6 +42,24 @@ export const DayPanel: React.FC<DayPanelProps> = ({
         <h2 className={styles.monthDayTitle}>{title}</h2>
         <span className={styles.weekdaySubtitle}>{subtitle}</span>
       </div>
+
+      {/* INI SPEC-002 - 05 */}
+      {/* Banner conmemorativo si la fecha seleccionada es feriado nacional */}
+      {holiday && (
+        <div
+          className={styles.holidayBanner}
+          role="region"
+          aria-label={`Feriado nacional: ${holiday.title}`}
+          data-testid="holiday-banner"
+        >
+          <div className={styles.bannerTagRow}>
+            <Sparkles size={14} className={styles.bannerIcon} aria-hidden="true" />
+            <span className={styles.bannerTag}>Feriado Oficial</span>
+          </div>
+          <h3 className={styles.bannerTitle}>{holiday.title}</h3>
+        </div>
+      )}
+      {/* FIN SPEC-002 - 05 */}
 
       {/* Lista de eventos del día */}
       <div className={styles.eventsContainer}>

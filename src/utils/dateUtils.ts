@@ -2,6 +2,10 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import type { CalendarEvent, DayCell } from '../types/calendar';
+//INI SPEC-002 - 03
+// Importación de mapa de feriados
+import type { HolidaysMap } from '../types/holiday';
+//FIN SPEC-002 - 03
 
 // Configurar dayjs globalmente en español
 dayjs.locale('es');
@@ -27,7 +31,16 @@ export const MONTH_NAMES_ES = [
 /**
  * Genera una cuadrícula de 42 días (6 semanas exactas) iniciando en Lunes.
  */
-export function generateMonthGrid(year: number, monthIndex: number, selectedDateStr: string, events: CalendarEvent[]): DayCell[] {
+export function generateMonthGrid(
+  year: number,
+  monthIndex: number,
+  selectedDateStr: string,
+  events: CalendarEvent[],
+  //INI SPEC-002 - 03
+  // Mapa opcional de feriados para inyectar en las celdas de la cuadrícula
+  holidaysMap?: HolidaysMap
+  //FIN SPEC-002 - 03
+): DayCell[] {
   const firstDayOfMonth = dayjs(new Date(year, monthIndex, 1));
   const todayStr = dayjs().format('YYYY-MM-DD');
 
@@ -49,6 +62,9 @@ export function generateMonthGrid(year: number, monthIndex: number, selectedDate
       isToday: dateStr === todayStr,
       isSelected: dateStr === selectedDateStr,
       events: dayEvents,
+      //INI SPEC-002 - 03
+      holiday: holidaysMap ? holidaysMap[dateStr] : undefined,
+      //FIN SPEC-002 - 03
     });
   }
 
