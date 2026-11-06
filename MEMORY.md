@@ -1,8 +1,8 @@
 # MEMORY.md — Memoria Activa del Proyecto
 Memoria del proyecto entre sesiones. Máximo ~60-80 líneas: resume o elimina lo que ya no aporte.
 
-> **Fase Activa**: Preparación de Infraestructura SDD y Calibración del Sistema CERRADA Y APROBADA.
-> **Última actualización**: 5 de noviembre de 2026.
+> **Fase Activa**: Cimientos y Arquitectura SDD publicados en GitHub (`elSanku/Calendario`).
+> **Última actualización**: 6 de noviembre de 2026.
 
 ## 1. Estado Actual
 - **Base del Calendario**: **CERRADA, APROBADA Y OPERATIVA**.
