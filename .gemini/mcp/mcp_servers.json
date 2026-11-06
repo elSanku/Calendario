@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"],
+      "description": "Herramienta MCP local para pruebas visuales en vivo, auditoría de accesibilidad (a11y) y responsive del formulario y componentes."
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp@latest"],
+      "description": "Herramienta MCP local para consulta de documentación técnica oficial y actualizada (React 19, Dayjs, Lucide React, Vitest, CSS Modules)."
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "description": "Servidor MCP oficial de GitHub para interactuar con repositorios, issues, PRs y commits."
+    }
+  }
+}

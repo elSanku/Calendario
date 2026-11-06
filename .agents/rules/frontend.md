@@ -1,0 +1,24 @@
+# Reglas para Aplicaciones Frontend con React
+
+- Usar kebab-case para los nombres de componentes (archivos/carpetas).
+- Usar únicamente componentes funcionales de React.
+- Usar TypeScript para todo código nuevo.
+- Mantener los componentes pequeños y enfocados.
+- Preferir componentes reutilizables sobre interfaces duplicadas.
+- Mantener la lógica de negocio fuera del JSX cuando sea posible.
+- Usar nombres de variables y funciones claros y completos.
+- Guardar los tipos compartidos en archivos comunes, no dentro de los componentes.
+- Tipar las props para cada componente.
+- Mantener nombres consistentes para archivos y carpetas.
+- Un componente por carpeta cuando el componente no sea trivial.
+- Escribir código simple y legible antes que código rebuscado.
+- Manejar estados de carga, error y vacío.
+- Evitar renderizados innecesarios.
+- Usar hooks únicamente en el nivel superior (top-level).
+- No mutar el estado directamente.
+- Preferir la composición sobre componentes con renderizado condicional excesivo.
+- Mantener estilos consistentes y predecibles.
+- Usar CSS Modules para estilos con alcance local (scoped).
+- Eliminar código, importaciones y comentarios que no se utilicen.
+- Añadir pruebas para la lógica importante y componentes reutilizables.
+- Seguir los patrones existentes del proyecto antes de introducir nuevos.

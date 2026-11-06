@@ -1,0 +1,112 @@
+.trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.trigger:hover,
+.trigger[aria-expanded='true'] {
+  background-color: #f1f5f9;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid #48a999;
+  outline-offset: 2px;
+}
+
+/* Popover del menú: anula el centrado por defecto del UA */
+.menu {
+  margin: 0;
+  padding: 6px;
+  min-width: 150px;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  inset: auto;
+  position: fixed;
+}
+
+/* Con CSS Anchor Positioning: debajo del disparador, alineado a su borde final */
+@supports (position-area: block-end) {
+  .menu {
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    margin-block: 4px;
+  }
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  color: #334155;
+  text-align: start;
+  cursor: pointer;
+}
+
+.item:hover,
+.item:focus {
+  background-color: #f1f5f9;
+  outline: none;
+}
+
+.item:focus-visible {
+  outline: 2px solid #48a999;
+  outline-offset: -2px;
+}
+
+.danger {
+  color: #dc2626;
+}
+
+.danger:hover,
+.danger:focus {
+  background-color: #fef2f2;
+}
+
+/* Animación sutil de apertura/cierre */
+@media (prefers-reduced-motion: no-preference) {
+  .menu {
+    opacity: 0;
+    translate: 0 -4px;
+    transition:
+      opacity 0.15s,
+      translate 0.15s,
+      display 0.15s allow-discrete,
+      overlay 0.15s allow-discrete;
+  }
+
+  .menu:popover-open {
+    opacity: 1;
+    translate: 0 0;
+    transition-duration: 0.1s;
+  }
+}
+
+@starting-style {
+  .menu:popover-open {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
