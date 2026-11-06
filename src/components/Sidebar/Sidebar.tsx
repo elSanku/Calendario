@@ -11,6 +11,8 @@ interface SidebarProps {
   onMonthSelect: (monthIndex: number) => void;
 }
 
+//INI SPEC-001 - 04
+// Sidebar con diseño Soft UI, acentos terracota y soporte de teclado accesible
 export const Sidebar: React.FC<SidebarProps> = ({
   year,
   selectedMonth,
@@ -18,11 +20,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onYearChange,
   onMonthSelect,
 }) => {
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onMonthSelect(index);
+    }
+  };
+
   return (
-    <aside className={styles.sidebar}>
-      {/* Controles de Año */}
+    <aside className={styles.sidebar} aria-label="Navegación de fechas">
+      {/* Selector de Año con botones táctiles */}
       <div className={styles.yearSelector}>
         <button
+          type="button"
           className={styles.navBtn}
           onClick={() => onYearChange(year - 1)}
           aria-label="Año anterior"
@@ -31,6 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
         <span className={styles.yearText}>{year}</span>
         <button
+          type="button"
           className={styles.navBtn}
           onClick={() => onYearChange(year + 1)}
           aria-label="Año siguiente"
@@ -39,8 +50,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      {/* Lista de Meses */}
-      <ul className={styles.monthList}>
+      {/* Lista de los 12 meses */}
+      <ul className={styles.monthList} role="listbox" aria-label="Meses del año">
         {MONTH_NAMES_ES.map((name, index) => {
           const isSelected = index === selectedMonth;
           const count = eventCounts[index] || 0;
@@ -50,11 +61,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               key={name}
               className={`${styles.monthItem} ${isSelected ? styles.active : ''}`}
               onClick={() => onMonthSelect(index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               role="button"
               tabIndex={0}
+              aria-selected={isSelected}
             >
               <span className={styles.monthName}>{name}</span>
-              {count > 0 && <span className={styles.eventBadge}>{count}</span>}
+              {count > 0 && (
+                <span
+                  className={`${styles.eventBadge} ${isSelected ? styles.badgeActive : ''}`}
+                  aria-label={`${count} eventos`}
+                >
+                  {count}
+                </span>
+              )}
             </li>
           );
         })}
@@ -62,3 +82,4 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </aside>
   );
 };
+//FIN SPEC-001 - 04

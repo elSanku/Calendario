@@ -15,8 +15,10 @@
   background-color: #f1f5f9;
 }
 
+/* INI SPEC-001 - 06 */
+/* Tokens Soft UI para menú de acciones */
 .trigger:focus-visible {
-  outline: 2px solid #48a999;
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
@@ -25,10 +27,10 @@
   margin: 0;
   padding: 6px;
   min-width: 150px;
-  border: 1px solid #edf2f7;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface-elevated);
+  box-shadow: var(--shadow-soft-md);
   inset: auto;
   position: fixed;
 }
@@ -71,9 +73,10 @@
 }
 
 .item:focus-visible {
-  outline: 2px solid #48a999;
+  outline: 2px solid var(--accent-primary);
   outline-offset: -2px;
 }
+/* FIN SPEC-001 - 06 */
 
 .danger {
   color: #dc2626;

@@ -1,37 +1,148 @@
+/* INI SPEC-001 - 02 */
+/* Contenedor principal Soft UI y tarjeta central */
 .appContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f3d32 0%, #1e5245 50%, #2f7362 100%); /* Fondo degradado verde oscuro captura 1 */
-  padding: 24px;
+  background-color: var(--bg-canvas);
+  padding: 32px 24px;
+  position: relative;
 }
 
 .calendarCard {
   width: 100%;
-  max-width: 1100px;
-  min-height: 640px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+  max-width: 1140px;
+  min-height: 680px;
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft-lg);
   display: flex;
   overflow: hidden;
+  position: relative;
+}
+
+.sidebarWrapper {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.dayPanelWrapper {
+  display: flex;
+  flex-shrink: 0;
 }
 
 .centerArea {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: var(--bg-surface-elevated);
+  min-width: 0;
+}
+
+.mobileBar {
+  display: none;
+}
+
+.drawerBackdrop {
+  display: none;
 }
 
 @media (max-width: 960px) {
+  .appContainer {
+    padding: 12px;
+    align-items: flex-start;
+  }
+
   .calendarCard {
     flex-direction: column;
     min-height: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  .mobileBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .mobileToggleBtn {
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 7px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  }
+
+  .mobileToggleBtn:hover {
+    background-color: var(--bg-subtle);
+  }
+
+  .mobileToggleBtn:active {
+    transform: scale(0.96);
+  }
+
+  .sidebarWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-soft-lg);
+  }
+
+  .sidebarWrapper.open {
+    transform: translateX(0);
+  }
+
+  .dayPanelWrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-soft-lg);
+  }
+
+  .dayPanelWrapper.open {
+    transform: translateX(0);
+  }
+
+  .drawerBackdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(37, 35, 33, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    animation: fadeIn 0.2s ease-out;
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 .storageError {
   position: fixed;
@@ -40,10 +151,12 @@
   transform: translateX(-50%);
   margin: 0;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #991b1b;
   font-size: 0.9rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--shadow-soft-md);
+  z-index: 200;
 }
+/* FIN SPEC-001 - 02 */

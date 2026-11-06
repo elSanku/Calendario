@@ -1,11 +1,14 @@
+/* INI SPEC-001 - 07 */
+/* Estilos Soft UI para Diálogo de Confirmación */
 .dialog {
-  width: min(380px, calc(100vw - 32px));
+  width: min(390px, calc(100vw - 32px));
 }
 
 .message {
-  margin: 12px 0 20px;
+  margin: 14px 0 24px;
   font-size: 0.95rem;
-  line-height: 1.45;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .confirmBtn {
@@ -13,14 +16,26 @@
   font-size: 0.9rem;
   font-weight: 600;
   padding: 9px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   background: #dc2626;
   border: 1px solid #dc2626;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+  transition: background-color 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 
 .confirmBtn:hover {
   background: #b91c1c;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
 }
 
+.confirmBtn:active {
+  transform: scale(0.97);
+}
+
+.confirmBtn:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+/* FIN SPEC-001 - 07 */

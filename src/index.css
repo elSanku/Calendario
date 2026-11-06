@@ -4,13 +4,52 @@
   padding: 0;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #2d3748;
-  background-color: #0f3d32;
-  -webkit-font-smoothing: antialiased;
+/* INI SPEC-001 - 01 */
+/* Tokens globales Soft UI y tipografía de sistema */
+:root {
+  /* Fondos y Superficies Soft UI */
+  --bg-canvas: #f4f3ef;            /* Fondo base cálido piedra/lino */
+  --bg-surface: #fcfbf9;           /* Superficies secundarias */
+  --bg-surface-elevated: #ffffff;  /* Tarjetas y modales principales */
+  --bg-subtle: #eeece6;            /* Hover suave, inputs y fondos tenues */
+
+  /* Bordes */
+  --border-subtle: rgba(40, 36, 33, 0.07);
+  --border-strong: rgba(40, 36, 33, 0.14);
+
+  /* Acento Principal: Terracota / Ámbar Cálido */
+  --accent-primary: #c85a32;       /* Terracota cálido (contraste > 4.5:1 con blanco) */
+  --accent-hover: #b04c27;
+  --accent-light: rgba(200, 90, 50, 0.12);
+  --accent-contrast: #ffffff;
+
+  /* Jerarquía de Texto (Carbón Cálido) */
+  --text-primary: #252321;         /* Títulos y texto de alto contraste */
+  --text-secondary: #6b6660;       /* Subtítulos y metadatos */
+  --text-tertiary: #a19c94;        /* Días fuera de mes y placeholders */
+
+  /* Sombras Táctiles Multicapa */
+  --shadow-soft-sm: 0 2px 6px -1px rgba(37, 35, 33, 0.05), 0 4px 12px -2px rgba(37, 35, 33, 0.04);
+  --shadow-soft-md: 0 6px 18px -3px rgba(37, 35, 33, 0.07), 0 12px 28px -4px rgba(37, 35, 33, 0.06);
+  --shadow-soft-lg: 0 18px 40px -8px rgba(37, 35, 33, 0.09), 0 26px 65px -10px rgba(37, 35, 33, 0.08);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  /* Radios Suaves */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
 }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* FIN SPEC-001 - 01 */
 
 button {
   font-family: inherit;

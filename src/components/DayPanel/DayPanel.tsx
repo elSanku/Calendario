@@ -13,6 +13,8 @@ interface DayPanelProps {
   onDeleteEvent?: (event: CalendarEvent) => void;
 }
 
+//INI SPEC-001 - 06
+// Panel de detalle del día Soft UI con acento terracota, truncado de textos y botón táctil
 export const DayPanel: React.FC<DayPanelProps> = ({
   selectedDateStr,
   events,
@@ -23,8 +25,8 @@ export const DayPanel: React.FC<DayPanelProps> = ({
   const { title, subtitle } = formatDayPanelHeader(selectedDateStr);
 
   return (
-    <aside className={styles.dayPanel}>
-      {/* Encabezado con fecha en grande */}
+    <aside className={styles.dayPanel} aria-label="Detalle del día seleccionado">
+      {/* Encabezado con fecha en grande y día en terracota */}
       <div className={styles.panelHeader}>
         <h2 className={styles.monthDayTitle}>{title}</h2>
         <span className={styles.weekdaySubtitle}>{subtitle}</span>
@@ -39,9 +41,15 @@ export const DayPanel: React.FC<DayPanelProps> = ({
         ) : (
           <ul className={styles.eventList}>
             {events.map((evt) => (
-              <li key={evt.id} className={styles.eventCard}>
+              <li
+                key={evt.id}
+                className={styles.eventCard}
+                style={{ borderLeftColor: evt.color || 'var(--accent-primary)' }}
+              >
                 <div className={styles.eventInfo}>
-                  <h4 className={styles.eventTitle}>{evt.title}</h4>
+                  <h4 className={styles.eventTitle} title={evt.title}>
+                    {evt.title}
+                  </h4>
                   <span className={styles.eventTime}>{evt.time ?? 'Todo el día'}</span>
                 </div>
                 {/* Menú desplegable con acciones Editar / Eliminar */}
@@ -56,14 +64,16 @@ export const DayPanel: React.FC<DayPanelProps> = ({
         )}
       </div>
 
-      {/* Botón flotante circular + */}
+      {/* Botón flotante circular + con acento terracota */}
       <button
+        type="button"
         className={styles.fabAdd}
         onClick={onAddEventClick}
         aria-label="Agregar nuevo evento"
       >
-        <Plus size={22} color="#ffffff" />
+        <Plus size={22} color="var(--accent-contrast)" />
       </button>
     </aside>
   );
 };
+//FIN SPEC-001 - 06

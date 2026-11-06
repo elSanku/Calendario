@@ -1,16 +1,18 @@
+/* INI SPEC-001 - 07 */
+/* Estilos Soft UI para Modales y Formularios */
 .dialog {
-  border: none;
-  border-radius: 12px;
-  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 26px;
   width: min(480px, calc(100vw - 32px));
-  background: #ffffff;
-  color: #334155;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft-lg);
 }
 
 .dialog:modal {
   overscroll-behavior: contain;
-  /* Centrado en pantalla (un reset global de márgenes lo desalinea) */
+  /* Centrado en pantalla */
   position: fixed;
   inset: 0;
   margin: auto;
@@ -18,42 +20,65 @@
 }
 
 .dialog::backdrop {
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(37, 35, 33, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
   overscroll-behavior: contain;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .title {
   margin: 0;
   font-size: 1.25rem;
-  color: #1e293b;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
 .closeBtn {
-  background: none;
-  border: none;
-  padding: 4px;
-  border-radius: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  color: #64748b;
+  color: var(--text-secondary);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s, transform 0.1s;
 }
 
 .closeBtn:hover {
-  background-color: #f1f5f9;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.closeBtn:active {
+  transform: scale(0.95);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .field {
@@ -67,29 +92,33 @@
 .field label {
   font-size: 0.85rem;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .optional {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--text-tertiary);
 }
 
 .field input,
 .field textarea {
   font: inherit;
   font-size: 0.92rem;
-  padding: 9px 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  color: #1e293b;
+  padding: 9px 12px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
   resize: vertical;
+  box-shadow: var(--shadow-inset);
+  transition: border-color 0.15s, outline 0.15s;
 }
 
 .field input:focus-visible,
 .field textarea:focus-visible {
-  outline: 2px solid #48a999;
+  outline: 2px solid var(--accent-primary);
   outline-offset: 1px;
-  border-color: #48a999;
+  border-color: var(--accent-primary);
 }
 
 .row {
@@ -101,7 +130,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .cancelBtn,
@@ -110,37 +139,60 @@
   font-size: 0.9rem;
   font-weight: 600;
   padding: 9px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: transform 0.1s, background-color 0.15s, box-shadow 0.15s;
 }
 
 .cancelBtn {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #475569;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
 }
 
 .cancelBtn:hover {
-  background: #f1f5f9;
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.cancelBtn:active {
+  transform: scale(0.97);
+}
+
+.cancelBtn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .saveBtn {
-  background: #48a999;
-  border: 1px solid #48a999;
-  color: #ffffff;
+  background: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-contrast);
+  box-shadow: 0 4px 12px rgba(200, 90, 50, 0.3);
 }
 
 .saveBtn:hover {
-  background: #3d9283;
+  background: var(--accent-hover);
+  box-shadow: 0 6px 16px rgba(200, 90, 50, 0.4);
+}
+
+.saveBtn:active {
+  transform: scale(0.97);
+}
+
+.saveBtn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .saveBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .saveBtn:disabled:hover {
-  background: #48a999;
+  background: var(--accent-primary);
 }
 
 .fieldFooter {
@@ -156,17 +208,19 @@
 .error {
   font-size: 0.8rem;
   color: #dc2626;
+  font-weight: 500;
 }
 
 .counter {
   margin-left: auto;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
 }
 
 .counterOver {
   color: #dc2626;
+  font-weight: 600;
 }
 
 .field input[aria-invalid='true'],
@@ -178,8 +232,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
   background: #fffbeb;
   border: 1px solid #fde68a;
 }
@@ -189,4 +243,4 @@
   font-size: 0.82rem;
   color: #92400e;
 }
-
+/* FIN SPEC-001 - 07 */

@@ -10,6 +10,10 @@ import { mockEvents } from './mocks/events';
 import type { CalendarEvent } from './types/calendar';
 import { generateMonthGrid, getEventCountsByMonth } from './utils/dateUtils';
 import { generateId, sanitizeEvents, sortEventsByTime } from './utils/eventValidation';
+//INI SPEC-001 - 02
+// Iconos para barra de navegación en vista móvil
+import { Calendar as CalendarIcon, Clock } from 'lucide-react';
+//FIN SPEC-001 - 02
 import styles from './App.module.css';
 
 const EVENTS_STORAGE_KEY = 'calendar-events';
@@ -66,6 +70,23 @@ export const App: React.FC = () => {
   // Evento pendiente de confirmación para eliminar
   const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
 
+  //INI SPEC-001 - 02
+  // Estados para drawers colapsables en móvil
+  const [isSidebarDrawerOpen, setIsSidebarDrawerOpen] = useState<boolean>(false);
+  const [isDayPanelDrawerOpen, setIsDayPanelDrawerOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsSidebarDrawerOpen(false);
+        setIsDayPanelDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  //FIN SPEC-001 - 02
+
   // Elimina el evento (por ID) tras la confirmación
   const handleConfirmDelete = () => {
     if (deletingEvent) {
@@ -97,6 +118,9 @@ export const App: React.FC = () => {
   // Manejador para selección de mes desde el sidebar
   const handleMonthSelect = (monthIndex: number) => {
     setCurrentMonthIndex(monthIndex);
+    //INI SPEC-001 - 02
+    setIsSidebarDrawerOpen(false);
+    //FIN SPEC-001 - 02
   };
 
   // Manejador para selección de día en la grilla
@@ -142,29 +166,69 @@ export const App: React.FC = () => {
   return (
     <div className={styles.appContainer}>
       <div className={styles.calendarCard}>
-        {/* Sidebar morado con navegación de año y meses (Captura 2) */}
-        <Sidebar
-          year={currentYear}
-          selectedMonth={currentMonthIndex}
-          eventCounts={eventCounts}
-          onYearChange={handleYearChange}
-          onMonthSelect={handleMonthSelect}
-        />
+        {/* INI SPEC-001 - 02 */}
+        {/* Barra superior visible en móviles para abrir paneles laterales */}
+        <div className={styles.mobileBar}>
+          <button
+            type="button"
+            className={styles.mobileToggleBtn}
+            onClick={() => setIsSidebarDrawerOpen(true)}
+            aria-label="Abrir navegación de meses"
+          >
+            <CalendarIcon size={16} />
+            <span>Meses</span>
+          </button>
+          <button
+            type="button"
+            className={styles.mobileToggleBtn}
+            onClick={() => setIsDayPanelDrawerOpen(true)}
+            aria-label="Abrir agenda del día"
+          >
+            <Clock size={16} />
+            <span>Agenda</span>
+          </button>
+        </div>
 
-        {/* Área Central: Header + Cuadrícula mensual (Captura 1) */}
+        {/* Sidebar con navegación de año y meses envuelto en drawer para móvil */}
+        <div className={`${styles.sidebarWrapper} ${isSidebarDrawerOpen ? styles.open : ''}`}>
+          <Sidebar
+            year={currentYear}
+            selectedMonth={currentMonthIndex}
+            eventCounts={eventCounts}
+            onYearChange={handleYearChange}
+            onMonthSelect={handleMonthSelect}
+          />
+        </div>
+
+        {/* Área Central: Header + Cuadrícula mensual */}
         <main className={styles.centerArea}>
           <Header />
           <CalendarGrid cells={gridCells} onSelectDay={handleSelectDay} />
         </main>
 
-        {/* Panel lateral derecho: Detalle del día y botón + (Captura 1) */}
-        <DayPanel
-          selectedDateStr={selectedDateStr}
-          events={selectedDayEvents}
-          onAddEventClick={() => setIsEventModalOpen(true)}
-          onEditEvent={handleEditEvent}
-          onDeleteEvent={setDeletingEvent}
-        />
+        {/* Panel lateral derecho: Detalle del día y botón + envuelto en drawer para móvil */}
+        <div className={`${styles.dayPanelWrapper} ${isDayPanelDrawerOpen ? styles.open : ''}`}>
+          <DayPanel
+            selectedDateStr={selectedDateStr}
+            events={selectedDayEvents}
+            onAddEventClick={() => setIsEventModalOpen(true)}
+            onEditEvent={handleEditEvent}
+            onDeleteEvent={setDeletingEvent}
+          />
+        </div>
+
+        {/* Backdrop para cerrar drawers al tocar fuera en pantallas móviles */}
+        {(isSidebarDrawerOpen || isDayPanelDrawerOpen) && (
+          <div
+            className={styles.drawerBackdrop}
+            onClick={() => {
+              setIsSidebarDrawerOpen(false);
+              setIsDayPanelDrawerOpen(false);
+            }}
+            aria-hidden="true"
+          />
+        )}
+        {/* FIN SPEC-001 - 02 */}
 
         {/* Confirmación antes de eliminar un evento */}
         <ConfirmDialog

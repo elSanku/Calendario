@@ -1,10 +1,15 @@
 # MEMORY.md — Memoria Activa del Proyecto
 Memoria del proyecto entre sesiones. Máximo ~60-80 líneas: resume o elimina lo que ya no aporte.
 
-> **Fase Activa**: Cimientos y Arquitectura SDD publicados en GitHub (`elSanku/Calendario`).
+> **Fase Activa**: Spec 001 Rediseño Visual Profesional (Anti-UI Slop) CERRADA, APROBADA E IMPLEMENTADA (8/8).
 > **Última actualización**: 6 de noviembre de 2026.
 
 ## 1. Estado Actual
+- **`specs/001-rediseno-visual-anti-ui-slop/`**: **CERRADA E IMPLEMENTADA**.
+  - Estética unificada Soft UI / Neumorfismo suave con acento terracota (`#c85a32`).
+  - Eliminados degradados verdes y barra morada lila.
+  - Soporte de layout móvil mediante drawers colapsables.
+  - 8/8 tareas verificadas al 100% con 51 tests en verde.
 - **Base del Calendario**: **CERRADA, APROBADA Y OPERATIVA**.
   - Cuadrícula fija de 42 celdas por mes (6 semanas completas) con lunes como inicio de semana (`src/components/CalendarGrid/`).
   - Navegación anual y mensual vertical con contador de eventos activos en Sidebar (`src/components/Sidebar/`).

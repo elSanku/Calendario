@@ -2,23 +2,25 @@ import React from 'react';
 import { Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 import styles from './Header.module.css';
 
+//INI SPEC-001 - 03
+// Header con diseño Soft UI y acentos terracota
 export const Header: React.FC = () => {
   return (
     <header className={styles.header}>
-      {/* Logotipo estilo CLDR */}
+      {/* Logotipo del Calendario */}
       <div className={styles.brand}>
         <div className={styles.logoIcon}>
-          <CalendarIcon size={20} color="#1abc9c" />
+          <CalendarIcon size={20} className={styles.brandIcon} />
         </div>
-        <span className={styles.brandName}>CLDR</span>
+        <span className={styles.brandName}>Calendario</span>
       </div>
 
       {/* Enlaces de navegación */}
-      <nav className={styles.navigation}>
+      <nav className={styles.navigation} aria-label="Navegación principal">
         <a href="#hoy" className={styles.navLink}>
           Hoy
         </a>
-        <a href="#calendario" className={`${styles.navLink} ${styles.activeLink}`}>
+        <a href="#calendario" className={`${styles.navLink} ${styles.activeLink}`} aria-current="page">
           Calendario
         </a>
         <a href="#organizar" className={styles.navLink}>
@@ -28,8 +30,8 @@ export const Header: React.FC = () => {
 
       {/* Perfil de usuario y avatar */}
       <div className={styles.userSection}>
-        <button className={styles.dropdownBtn} aria-label="Menú de usuario">
-          <ChevronDown size={18} color="#666" />
+        <button className={styles.dropdownBtn} aria-label="Menú de usuario" type="button">
+          <ChevronDown size={18} className={styles.chevronIcon} />
         </button>
         <div className={styles.avatar}>
           <img
@@ -41,4 +43,4 @@ export const Header: React.FC = () => {
     </header>
   );
 };
-
+//FIN SPEC-001 - 03
