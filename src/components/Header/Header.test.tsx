@@ -12,7 +12,11 @@ describe('Header', () => {
     expect(screen.getByRole('button', { name: 'Ir a hoy' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Mes siguiente' })).toBeTruthy();
     expect(screen.getByRole('searchbox', { name: 'Buscar eventos' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Nuevo' })).toBeTruthy();
+    //INI SPEC-004 - 04
+    // Verificación de integración de UserProfileBadge y remoción del botón redundante Nuevo
+    expect(screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Nuevo' })).toBeNull();
+    //FIN SPEC-004 - 04
   });
 
   it('renderiza el mes y año activos en español (ej. Octubre 2026)', () => {
@@ -68,13 +72,38 @@ describe('Header', () => {
     expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).toBeNull();
   });
 
-  it('invoca onNewEvent al hacer clic en el botón Nuevo', () => {
-    const onNewEvent = vi.fn();
-    render(<Header onNewEvent={onNewEvent} />);
-    const newBtn = screen.getByRole('button', { name: 'Nuevo' });
-    fireEvent.click(newBtn);
-    expect(onNewEvent).toHaveBeenCalledTimes(1);
+  //INI SPEC-004 - 04
+  // Verificación de remoción definitiva de botón Nuevo y delegación de props a UserProfileBadge
+  it('integra UserProfileBadge y no renderiza el botón redundante Nuevo', () => {
+    render(<Header />);
+    expect(screen.queryByRole('button', { name: 'Nuevo' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' })).toBeTruthy();
   });
+
+  it('propaga profile y onRoleChange hacia UserProfileBadge', () => {
+    const onRoleChange = vi.fn();
+    const customProfile = {
+      id: 'usr-custom-header',
+      name: 'Carlos Ruiz',
+      initials: 'CR',
+      activeRole: 'Trabajo' as const,
+      availableRoles: ['Personal' as const, 'Trabajo' as const],
+    };
+
+    render(<Header profile={customProfile} onRoleChange={onRoleChange} />);
+    expect(screen.getByText('CR')).toBeTruthy();
+    expect(screen.getByText('Carlos Ruiz')).toBeTruthy();
+    expect(screen.getByText('Trabajo')).toBeTruthy();
+
+    const trigger = screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' });
+    fireEvent.click(trigger);
+
+    const personalOption = screen.getByRole('menuitemradio', { name: /Personal/i });
+    fireEvent.click(personalOption);
+
+    expect(onRoleChange).toHaveBeenCalledWith('Personal');
+  });
+  //FIN SPEC-004 - 04
 
   it('no contiene los enlaces estáticos obsoletos ni el avatar falso (anti-ui-slop)', () => {
     render(<Header />);

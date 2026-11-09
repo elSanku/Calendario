@@ -7,12 +7,14 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  color: var(--text-secondary);
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .trigger:hover,
 .trigger[aria-expanded='true'] {
-  background-color: #f1f5f9;
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
 }
 
 /* INI SPEC-001 - 06 */
@@ -27,10 +29,10 @@
   margin: 0;
   padding: 6px;
   min-width: 150px;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background-color: var(--bg-surface-elevated);
-  box-shadow: var(--shadow-soft-md);
+  background-color: var(--bg-surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
   inset: auto;
   position: fixed;
 }
@@ -61,14 +63,16 @@
   background: none;
   font: inherit;
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--text-primary);
   text-align: start;
   cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .item:hover,
 .item:focus {
-  background-color: #f1f5f9;
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
   outline: none;
 }
 
@@ -79,12 +83,13 @@
 /* FIN SPEC-001 - 06 */
 
 .danger {
-  color: #dc2626;
+  color: #f43f5e;
 }
 
 .danger:hover,
 .danger:focus {
-  background-color: #fef2f2;
+  background-color: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
 }
 
 /* Animación sutil de apertura/cierre */

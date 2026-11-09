@@ -24,29 +24,32 @@ import { fetchHolidaysForYear, createHolidaysMap } from './utils/holidaysApi';
 import type { EventCategory } from './types/calendar';
 import { ALL_CATEGORIES, filterEvents } from './utils/categoryUtils';
 //FIN SPEC-003 - 07
+//INI SPEC-004 - 01
+// Tipos y constantes para perfil de usuario y conmutador de contexto
+import type { UserProfile, UserProfileRole } from './types/user';
+import { USER_PROFILE_STORAGE_KEY, DEFAULT_USER_PROFILE } from './types/user';
+//FIN SPEC-004 - 01
 import styles from './App.module.css';
 
 const EVENTS_STORAGE_KEY = 'calendar-events';
 
+//INI SPEC-004 - 01
+// Carga autoritaria de eventos: si existe clave en localStorage, no se reinyectan mocks
 const loadEvents = (): CalendarEvent[] => {
   try {
     const raw = localStorage.getItem(EVENTS_STORAGE_KEY);
-    if (raw) {
+    if (raw !== null) {
       const parsed: unknown = JSON.parse(raw);
-      // Se descartan los eventos mal formados para no romper la cuadrícula
       if (Array.isArray(parsed)) {
-        const stored = sanitizeEvents(parsed);
-        // Combinamos los eventos base con los guardados/creados por el usuario
-        const storedIds = new Set(stored.map((e) => e.id));
-        const combined = [...mockEvents.filter((m) => !storedIds.has(m.id)), ...stored];
-        return combined;
+        return sanitizeEvents(parsed);
       }
     }
   } catch {
-    // Datos corruptos o localStorage inaccesible: se usan los mocks
+    // Fallback ante error de lectura
   }
   return mockEvents;
 };
+//FIN SPEC-004 - 01
 
 export const App: React.FC = () => {
   const today = dayjs();
@@ -72,6 +75,39 @@ export const App: React.FC = () => {
       setStorageError(true);
     }
   }, [events]);
+
+  //INI SPEC-004 - 01
+  // Estado para el perfil del usuario activo y persistencia en localStorage
+  const [userProfile, setUserProfile] = useState<UserProfile>(() => {
+    try {
+      const raw = localStorage.getItem(USER_PROFILE_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as UserProfile;
+        if (parsed && typeof parsed.name === 'string' && parsed.activeRole) {
+          return parsed;
+        }
+      }
+    } catch {
+      // Fallback a perfil predeterminado
+    }
+    return DEFAULT_USER_PROFILE;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(USER_PROFILE_STORAGE_KEY, JSON.stringify(userProfile));
+    } catch {
+      // LocalStorage lleno o restringido
+    }
+  }, [userProfile]);
+
+  const handleRoleChange = (newRole: UserProfileRole) => {
+    setUserProfile((prev) => ({
+      ...prev,
+      activeRole: newRole,
+    }));
+  };
+  //FIN SPEC-004 - 01
 
   // Estado del modal de creación de eventos
   const [isEventModalOpen, setIsEventModalOpen] = useState<boolean>(false);
@@ -349,6 +385,8 @@ export const App: React.FC = () => {
         {/* Área Central: Header + Cuadrícula mensual */}
         <main className={styles.centerArea}>
           {/* INI SPEC-003 - 07 */}
+          {/* INI SPEC-004 - 03 */}
+          {/* Header con perfil y conmutador de rol; remoción de prop onNewEvent */}
           <Header
             currentMonthIndex={currentMonthIndex}
             currentYear={currentYear}
@@ -357,11 +395,10 @@ export const App: React.FC = () => {
             onPrevMonth={handlePrevMonth}
             onNextMonth={handleNextMonth}
             onToday={handleGoToToday}
-            onNewEvent={() => {
-              setEditingEvent(null);
-              setIsEventModalOpen(true);
-            }}
+            profile={userProfile}
+            onRoleChange={handleRoleChange}
           />
+          {/* FIN SPEC-004 - 03 */}
           <CalendarGrid
             cells={gridCells}
             onSelectDay={handleSelectDay}

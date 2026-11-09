@@ -97,8 +97,9 @@
 }
 
 .monthItem.active {
-  background-color: var(--accent-light);
-  color: var(--accent-primary);
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #A78BFA;
+  border: 1px solid rgba(139, 92, 246, 0.3);
   font-weight: 600;
 }
 
@@ -121,8 +122,9 @@
 }
 
 .badgeActive {
-  background-color: var(--accent-primary);
-  color: var(--accent-contrast);
+  background-color: #8B5CF6;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
 }
 
 @media (max-width: 960px) {
@@ -227,6 +229,7 @@
 
 .switchTrackActive {
   background-color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.45);
 }
 
 .categorySwitchThumb {

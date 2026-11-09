@@ -1,11 +1,18 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Search, X } from 'lucide-react';
+//INI SPEC-004 - 03
+// Actualización de iconos y componentes: UserProfileBadge y exclusión de Plus
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
+import { UserProfileBadge } from '../UserProfileBadge/UserProfileBadge';
+import type { UserProfile, UserProfileRole } from '../../types/user';
+//FIN SPEC-004 - 03
 import { MONTH_NAMES_ES } from '../../utils/dateUtils';
 import styles from './Header.module.css';
 
 //INI SPEC-003 - 04
 // Props para el Header de productividad: navegación de meses, buscador interactivo y acción rápida
+//INI SPEC-004 - 03
+// Retiro de onNewEvent e incorporación de profile y onRoleChange para UserProfileBadge
 export interface HeaderProps {
   currentMonthIndex?: number;
   currentYear?: number;
@@ -14,14 +21,18 @@ export interface HeaderProps {
   onPrevMonth?: () => void;
   onNextMonth?: () => void;
   onToday?: () => void;
-  onNewEvent?: () => void;
+  profile?: UserProfile;
+  onRoleChange?: (newRole: UserProfileRole) => void;
 }
+//FIN SPEC-004 - 03
 //FIN SPEC-003 - 04
 
 //INI SPEC-001 - 03
 // Header con diseño Soft UI y acentos terracota
 //INI SPEC-003 - 04
 // Rediseño de productividad: navegación rápida, mes/año dinámico, buscador interactivo y acción rápida
+//INI SPEC-004 - 03
+// Integración de UserProfileBadge y remoción del botón duplicado de nuevo evento
 export const Header: React.FC<HeaderProps> = ({
   currentMonthIndex = dayjs().month(),
   currentYear = dayjs().year(),
@@ -30,7 +41,8 @@ export const Header: React.FC<HeaderProps> = ({
   onPrevMonth,
   onNextMonth,
   onToday,
-  onNewEvent,
+  profile,
+  onRoleChange,
 }) => {
   const monthName = MONTH_NAMES_ES[currentMonthIndex] ?? 'Enero';
 
@@ -83,7 +95,8 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </nav>
 
-      {/* Sección Derecha: Buscador de eventos y botón de nuevo evento */}
+      {/* INI SPEC-004 - 03 */}
+      {/* Sección Derecha: Buscador de eventos y perfil de usuario con selector de rol */}
       <div className={styles.rightSection}>
         <div className={styles.searchContainer}>
           <Search size={15} className={styles.searchIcon} aria-hidden="true" />
@@ -108,18 +121,9 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        <button
-          type="button"
-          className={styles.newEventBtn}
-          onClick={onNewEvent}
-          aria-label="Nuevo"
-          title="Crear nuevo evento (N)"
-        >
-          <Plus size={16} aria-hidden="true" />
-          <span>Nuevo</span>
-          <kbd className={styles.shortcutBadge} aria-hidden="true">N</kbd>
-        </button>
+        <UserProfileBadge profile={profile} onRoleChange={onRoleChange} />
       </div>
+      {/* FIN SPEC-004 - 03 */}
     </header>
   );
 };

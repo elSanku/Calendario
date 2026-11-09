@@ -5,34 +5,40 @@
 }
 
 /* INI SPEC-001 - 01 */
-/* Tokens globales Soft UI y tipografía de sistema */
+/* Tokens globales Midnight Vibe (Dark Mode / High Contrast UI) */
 :root {
-  /* Fondos y Superficies Soft UI */
-  --bg-canvas: #f4f3ef;            /* Fondo base cálido piedra/lino */
-  --bg-surface: #fcfbf9;           /* Superficies secundarias */
-  --bg-surface-elevated: #ffffff;  /* Tarjetas y modales principales */
-  --bg-subtle: #eeece6;            /* Hover suave, inputs y fondos tenues */
+  /* 1. Fondos y Superficies Midnight Vibe */
+  --bg-canvas: #0B0E14;            /* Deep obsidian background */
+  --bg-surface: #181E2B;           /* Celdas de días del calendario y paneles secundarios */
+  --bg-surface-elevated: #121620;  /* Midnight navy surface (Card central / contenedor principal) */
+  --bg-subtle: #1F2637;            /* Inputs, buscador y botones neutros */
 
-  /* Bordes */
-  --border-subtle: rgba(40, 36, 33, 0.07);
-  --border-strong: rgba(40, 36, 33, 0.14);
+  /* 2. Bordes y Divisores */
+  --border-subtle: rgba(255, 255, 255, 0.07); /* Bordes de tarjetas y celdas */
+  --border-strong: #262F43;                   /* Divisores estructurados */
 
-  /* Acento Principal: Terracota / Ámbar Cálido */
-  --accent-primary: #c85a32;       /* Terracota cálido (contraste > 4.5:1 con blanco) */
-  --accent-hover: #b04c27;
-  --accent-light: rgba(200, 90, 50, 0.12);
-  --accent-contrast: #ffffff;
+  /* 4. Color Primario de Acento e Interacción (Teal / Turquesa Eléctrico #06B6D4) */
+  --accent-primary: #06B6D4;       /* Cyan 500 */
+  --accent-hover: #0891B2;         /* Cyan 600 */
+  --accent-light: rgba(6, 182, 212, 0.12); /* Tinte al 12% para celdas/fondos suaves */
+  --accent-contrast: #082F49;      /* Texto de alto contraste sobre turquesa */
+  --accent-glow: 0 4px 20px rgba(6, 182, 212, 0.35);
 
-  /* Jerarquía de Texto (Carbón Cálido) */
-  --text-primary: #252321;         /* Títulos y texto de alto contraste */
-  --text-secondary: #6b6660;       /* Subtítulos y metadatos */
-  --text-tertiary: #a19c94;        /* Días fuera de mes y placeholders */
+  /* 5. Acento Secundario (Violeta Digital #8B5CF6) */
+  --accent-secondary: #8B5CF6;
+  --accent-secondary-light: rgba(139, 92, 246, 0.15);
+  --accent-secondary-text: #A78BFA;
 
-  /* Sombras Táctiles Multicapa */
-  --shadow-soft-sm: 0 2px 6px -1px rgba(37, 35, 33, 0.05), 0 4px 12px -2px rgba(37, 35, 33, 0.04);
-  --shadow-soft-md: 0 6px 18px -3px rgba(37, 35, 33, 0.07), 0 12px 28px -4px rgba(37, 35, 33, 0.06);
-  --shadow-soft-lg: 0 18px 40px -8px rgba(37, 35, 33, 0.09), 0 26px 65px -10px rgba(37, 35, 33, 0.08);
-  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  /* 3. Tipografía y Jerarquía de Texto */
+  --text-primary: #F1F5F9;         /* Slate 100: Título de mes, año, números de días activos */
+  --text-secondary: #94A3B8;       /* Slate 400: Días semana LUN-DOM, subtítulos, etiquetas inactivas */
+  --text-tertiary: #475569;        /* Slate 600: Días fuera del mes (40% opacidad), placeholders */
+
+  /* Sombras y Glow Dark Mode */
+  --shadow-soft-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-soft-md: 0 6px 20px rgba(0, 0, 0, 0.45);
+  --shadow-soft-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 
   /* Radios Suaves */
   --radius-sm: 8px;
@@ -46,33 +52,46 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: var(--text-primary);
   background-color: var(--bg-canvas);
+  background-image: 
+    radial-gradient(circle at 14% 16%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 86% 84%, rgba(139, 92, 246, 0.04) 0%, transparent 45%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 /* FIN SPEC-001 - 01 */
 
 /* INI SPEC-003 - 01 */
-/* Tokens semánticos de categorías con alto contraste WCAG AAA y tipografía numérica tabular */
+/* Tokens semánticos de categorías Midnight Vibe con alto contraste */
 :root {
-  --cat-work-bg: #e8f1f8;
-  --cat-work-text: #1e4e79;
-  --cat-work-dot: #2b6cb0;
+  /* 6. Categorías / Tags de Eventos */
+  --cat-work-bg: rgba(56, 189, 248, 0.15);
+  --cat-work-text: #7DD3FC;
+  --cat-work-dot: #38BDF8;
 
-  --cat-personal-bg: #eaf5ee;
-  --cat-personal-text: #1b5e3a;
-  --cat-personal-dot: #2f855a;
+  --cat-personal-bg: rgba(16, 185, 129, 0.15);
+  --cat-personal-text: #6EE7B7;
+  --cat-personal-dot: #10B981;
 
-  --cat-health-bg: #f3eef8;
-  --cat-health-text: #55307d;
-  --cat-health-dot: #6b46c1;
+  --cat-health-bg: rgba(168, 85, 247, 0.15);
+  --cat-health-text: #D8B4FE;
+  --cat-health-dot: #A855F7;
 
-  --cat-important-bg: #fdecec;
-  --cat-important-text: #9b1c1c;
-  --cat-important-dot: #c53030;
+  --cat-important-bg: rgba(244, 63, 94, 0.15);
+  --cat-important-text: #FDA4AF;
+  --cat-important-dot: #F43F5E;
 
   --font-tabular: tabular-nums;
 }
 /* FIN SPEC-003 - 01 */
+
+/* INI SPEC-004 - 05 */
+/* Refinamiento atmosférico Midnight Vibe: sombras con glow y profundidad */
+:root {
+  --shadow-soft-md: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-soft-lg: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+}
+/* FIN SPEC-004 - 05 */
 
 button {
   font-family: inherit;

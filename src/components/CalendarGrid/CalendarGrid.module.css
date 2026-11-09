@@ -63,7 +63,8 @@
 
 .dayCell:hover {
   background-color: var(--bg-subtle);
-  box-shadow: var(--shadow-soft-md);
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.18), var(--shadow-soft-md);
   transform: translateY(-1px);
 }
 
@@ -96,26 +97,26 @@
 }
 
 /* INI SPEC-002 - 04 */
-/* Celda con Feriado Nacional: fondo ámbar claro distinguible */
+/* Celda con Feriado Nacional: fondo ámbar suave en Dark Mode */
 .holidayCell:not(.selected) {
-  background-color: #fff8f0;
-  border-color: rgba(200, 110, 40, 0.22);
-  box-shadow: 0 1px 3px rgba(200, 110, 40, 0.06), var(--shadow-soft-sm);
+  background-color: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.08), var(--shadow-soft-sm);
 }
 
 .holidayCell:not(.selected):hover {
-  background-color: #fcefdc;
-  border-color: rgba(200, 110, 40, 0.35);
-  box-shadow: 0 3px 8px rgba(200, 110, 40, 0.1), var(--shadow-soft-md);
+  background-color: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2), var(--shadow-soft-md);
 }
 
 .holidayCell.otherMonth:not(.selected) {
-  background-color: #fcf6ef;
-  opacity: 0.6;
+  background-color: rgba(245, 158, 11, 0.04);
+  opacity: 0.4;
 }
 
 .holidayCell:not(.selected) .dayNumber {
-  color: #92400e;
+  color: #fbbf24;
   font-weight: 700;
 }
 
@@ -134,8 +135,9 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background-color: rgba(200, 90, 50, 0.14);
-  color: #9a3412;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
   font-size: 0.62rem;
   font-weight: 700;
   padding: 1px 4px;
@@ -172,37 +174,38 @@
 /* FIN SPEC-002 - 04 */
 
 .otherMonth {
-  background-color: var(--bg-canvas);
-  opacity: 0.55;
+  background-color: #0d111a;
+  opacity: 0.4;
   box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.03);
 }
 
 .otherMonth .dayNumber {
-  color: var(--text-tertiary);
+  color: #475569;
   font-weight: 500;
 }
 
-/* Celda seleccionada con acento terracota */
+/* Celda seleccionada con tinte Cyan al 12% y borde marcado */
 .selected {
-  background-color: var(--accent-primary) !important;
-  border-color: var(--accent-primary) !important;
-  box-shadow: 0 6px 18px rgba(200, 90, 50, 0.35) !important;
+  background-color: rgba(6, 182, 212, 0.12) !important;
+  border-color: #06B6D4 !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25), inset 0 0 0 1px #06B6D4 !important;
   opacity: 1 !important;
 }
 
 .selected .dayNumber {
-  color: var(--accent-contrast) !important;
+  color: #06B6D4 !important;
   font-weight: 700;
 }
 
 /* Día de hoy cuando no está seleccionado */
 .today:not(.selected) {
-  border-color: var(--accent-light);
-  box-shadow: inset 0 0 0 1.5px var(--accent-light), var(--shadow-soft-sm);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: inset 0 0 0 1.5px rgba(6, 182, 212, 0.5), var(--shadow-soft-sm);
 }
 
 .today:not(.selected) .dayNumber {
-  color: var(--accent-primary);
+  color: #06B6D4;
   font-weight: 700;
 }
 

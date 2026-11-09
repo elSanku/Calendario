@@ -5,6 +5,9 @@ import { App } from './App';
 import dayjs from 'dayjs';
 import { MONTH_NAMES_ES } from './utils/dateUtils';
 //FIN SPEC-003 - 07
+//INI SPEC-004 - 06
+import { DEFAULT_USER_PROFILE, USER_PROFILE_STORAGE_KEY } from './types/user';
+//FIN SPEC-004 - 06
 
 beforeAll(() => {
   // Polyfill de <dialog> y Popover API para JSDOM
@@ -235,24 +238,27 @@ describe('App (Flujos de Integración)', () => {
 
     render(<App />);
 
+    //INI SPEC-004 - 01
+    // Delimitación explícita al contenedor DayPanel para evitar ambigüedad con chips de CalendarGrid
+    const dayPanel = screen.getByLabelText('Detalle del día seleccionado');
     // Ambos eventos deben estar visibles en el DayPanel
-    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
-    expect(screen.getByText('Cumpleaños Familiar')).toBeTruthy();
+    expect(within(dayPanel).getByText('Reunión Proyecto Alfa')).toBeTruthy();
+    expect(within(dayPanel).getByText('Cumpleaños Familiar')).toBeTruthy();
 
     // Desactivar la categoría Personal en el Sidebar
     const personalSwitch = screen.getByRole('switch', { name: 'Filtrar Personal' });
     fireEvent.click(personalSwitch);
 
     // Cumpleaños Familiar ya no debe verse, pero Reunión Proyecto Alfa sí
-    expect(screen.queryByText('Cumpleaños Familiar')).toBeNull();
-    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
+    expect(within(dayPanel).queryByText('Cumpleaños Familiar')).toBeNull();
+    expect(within(dayPanel).getByText('Reunión Proyecto Alfa')).toBeTruthy();
 
     // Usar el buscador en vivo del Header
     const searchInput = screen.getByRole('searchbox', { name: 'Buscar eventos' });
     fireEvent.change(searchInput, { target: { value: 'Inexistente' } });
 
     // Ahora no coincide ningún evento y se muestra el mensaje de estado vacío con botón de restablecer
-    expect(screen.queryByText('Reunión Proyecto Alfa')).toBeNull();
+    expect(within(dayPanel).queryByText('Reunión Proyecto Alfa')).toBeNull();
     expect(
       screen.getByText('No hay eventos que coincidan con los filtros o búsqueda activa.')
     ).toBeTruthy();
@@ -262,8 +268,9 @@ describe('App (Flujos de Integración)', () => {
     fireEvent.click(resetBtn);
 
     // Los dos eventos vuelven a mostrarse
-    expect(screen.getByText('Reunión Proyecto Alfa')).toBeTruthy();
-    expect(screen.getByText('Cumpleaños Familiar')).toBeTruthy();
+    expect(within(dayPanel).getByText('Reunión Proyecto Alfa')).toBeTruthy();
+    expect(within(dayPanel).getByText('Cumpleaños Familiar')).toBeTruthy();
+    //FIN SPEC-004 - 01
   });
 
   it('soporta atajos de teclado globales (N, ←, →, T) y los ignora cuando se edita un campo', () => {
@@ -308,4 +315,137 @@ describe('App (Flujos de Integración)', () => {
     expect(eventDialog?.hasAttribute('open')).toBe(false);
   });
   //FIN SPEC-003 - 07
+
+  //INI SPEC-004 - 06
+  it('garantiza la persistencia de borrado real: un evento inicial eliminado no resucita tras recarga (remontado)', () => {
+    // 1. Render inicial con localStorage limpio
+    const { unmount } = render(<App />);
+
+    // En el DayPanel seleccionamos el primer evento disponible
+    const dayPanel = screen.getByLabelText('Detalle del día seleccionado');
+    const eventHeadingsBefore = within(dayPanel).getAllByRole('heading', { level: 4 });
+    const initialCount = eventHeadingsBefore.length;
+    expect(initialCount).toBeGreaterThan(0);
+
+    const firstEventHeading = eventHeadingsBefore[0];
+    const eventTitle = firstEventHeading.textContent;
+    expect(eventTitle).toBeTruthy();
+
+    const eventCard = firstEventHeading.closest('li');
+    expect(eventCard).toBeTruthy();
+
+    const todayStr = dayjs().format('YYYY-MM-DD');
+
+    if (eventCard && eventTitle) {
+      // 2. Abrir menú de acciones del evento y hacer clic en Eliminar
+      const deleteBtn = within(eventCard).getByRole('menuitem', { name: 'Eliminar', hidden: true });
+      fireEvent.click(deleteBtn);
+
+      // Confirmar en el diálogo accesible
+      const confirmBtn = screen.getByRole('button', { name: 'Confirmar' });
+      fireEvent.click(confirmBtn);
+
+      // El evento ya no debe existir en el panel del día
+      const eventHeadingsAfter = within(dayPanel).queryAllByRole('heading', { level: 4 });
+      expect(eventHeadingsAfter.length).toBe(initialCount - 1);
+
+      // Verificar que en localStorage el evento para el día de hoy ya no figure
+      const rawStored = localStorage.getItem('calendar-events');
+      expect(rawStored).toBeTruthy();
+      const storedEvents = JSON.parse(rawStored || '[]') as Array<{ title: string; date: string }>;
+      const hasTodayDeletedEvent = storedEvents.some(
+        (e) => e.date === todayStr && e.title === eventTitle
+      );
+      expect(hasTodayDeletedEvent).toBe(false);
+
+      // 3. Simular recarga de página (F5): desmontar y volver a montar App
+      unmount();
+
+      render(<App />);
+
+      // Verificar que en la nueva instancia de App el evento eliminado NO resucita desde mockEvents
+      const dayPanelAfterReload = screen.getByLabelText('Detalle del día seleccionado');
+      const eventHeadingsReload = within(dayPanelAfterReload).getAllByRole('heading', { level: 4 });
+      expect(eventHeadingsReload.length).toBe(initialCount - 1);
+
+      const rawStoredAfterReload = localStorage.getItem('calendar-events');
+      const storedEventsAfterReload = JSON.parse(rawStoredAfterReload || '[]') as Array<{
+        title: string;
+        date: string;
+      }>;
+      const hasTodayDeletedEventReload = storedEventsAfterReload.some(
+        (e) => e.date === todayStr && e.title === eventTitle
+      );
+      expect(hasTodayDeletedEventReload).toBe(false);
+    }
+  });
+
+  it('permite alternar el rol en UserProfileBadge y persiste la selección en localStorage bajo calendar-user-profile', () => {
+    // 1. Render inicial: por defecto el perfil es "Personal"
+    const { unmount } = render(<App />);
+
+    const triggerBtn = screen.getByRole('button', {
+      name: 'Perfil de usuario y conmutador de rol',
+    });
+    expect(triggerBtn).toBeTruthy();
+    expect(within(triggerBtn).getByText(DEFAULT_USER_PROFILE.activeRole)).toBeTruthy();
+
+    // 2. Abrir el menú de selección de rol
+    fireEvent.click(triggerBtn);
+
+    const menu = screen.getByRole('menu', { name: 'Cambiar rol de usuario' });
+    expect(menu).toBeTruthy();
+
+    // Seleccionar opción "Trabajo"
+    const workOption = within(menu).getByRole('menuitemradio', { name: 'Trabajo' });
+    fireEvent.click(workOption);
+
+    // 3. El botón del badge ahora refleja el rol "Trabajo"
+    expect(within(triggerBtn).getByText('Trabajo')).toBeTruthy();
+
+    // Comprobar persistencia inmediata en localStorage
+    const storedProfile = JSON.parse(localStorage.getItem(USER_PROFILE_STORAGE_KEY) || '{}');
+    expect(storedProfile).toEqual({
+      ...DEFAULT_USER_PROFILE,
+      activeRole: 'Trabajo',
+    });
+
+    // 4. Simular recarga de página: desmontar y volver a montar
+    unmount();
+
+    render(<App />);
+
+    // Debe conservar el rol "Trabajo" recuperado de localStorage
+    const triggerBtnAfter = screen.getByRole('button', {
+      name: 'Perfil de usuario y conmutador de rol',
+    });
+    expect(within(triggerBtnAfter).getByText('Trabajo')).toBeTruthy();
+  });
+
+  it('permite abrir el modal accesible de nuevo evento mediante el atajo de teclado N sin depender de botones en Header', () => {
+    render(<App />);
+
+    // 1. Confirmar que el Header ya no tiene el botón redundante "+ Nuevo"
+    expect(screen.queryByRole('button', { name: /\+ Nuevo/i })).toBeNull();
+
+    const eventDialog = document.querySelector('dialog[aria-labelledby="event-modal-title"]');
+    expect(eventDialog?.hasAttribute('open')).toBe(false);
+
+    // 2. Presionar 'N' mayúscula globalmente en window
+    fireEvent.keyDown(window, { key: 'N' });
+
+    // El diálogo modal debe estar abierto y mostrar su encabezado
+    expect(eventDialog?.hasAttribute('open')).toBe(true);
+    expect(screen.getByText('Nuevo evento')).toBeTruthy();
+
+    // Cerrar modal
+    const cancelBtn = screen.getByRole('button', { name: 'Cancelar' });
+    fireEvent.click(cancelBtn);
+    expect(eventDialog?.hasAttribute('open')).toBe(false);
+
+    // 3. Presionar 'n' minúscula globalmente en window
+    fireEvent.keyDown(window, { key: 'n' });
+    expect(eventDialog?.hasAttribute('open')).toBe(true);
+  });
+  //FIN SPEC-004 - 06
 });

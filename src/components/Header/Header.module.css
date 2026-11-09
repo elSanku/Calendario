@@ -2,13 +2,15 @@
 /* Estilos Soft UI para el Header */
 /* INI SPEC-003 - 04 */
 /* Rediseño de productividad: cabecera interactiva con navegación de mes, buscador y acción rápida */
+/* INI SPEC-004 - 03 */
+/* Layout anti-colisión: flexbox con gap 12px y protección de desbordamiento */
 .header {
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  gap: 16px;
+  gap: 12px;
   background-color: var(--bg-surface-elevated);
   border-bottom: 1px solid var(--border-subtle);
   position: relative;
@@ -20,7 +22,10 @@
   align-items: center;
   gap: 16px;
   min-width: 0;
+  flex-shrink: 1;
+  overflow: hidden;
 }
+/* FIN SPEC-004 - 03 */
 
 .brand {
   display: flex;
@@ -39,7 +44,7 @@
   border-radius: var(--radius-sm);
   background-color: var(--accent-light);
   color: var(--accent-primary);
-  box-shadow: var(--shadow-soft-sm);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
 }
 
 .brandIcon {
@@ -60,6 +65,8 @@
   flex-shrink: 0;
 }
 
+/* INI SPEC-004 - 03 */
+/* Truncado elíptico seguro para el título de mes y año */
 .currentDateTitle {
   font-size: 1.2rem;
   font-weight: 700;
@@ -70,11 +77,16 @@
   align-items: center;
   gap: 7px;
   white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .monthName {
   color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+/* FIN SPEC-004 - 03 */
 
 .yearNumber {
   color: var(--text-secondary);
@@ -135,9 +147,9 @@
 }
 
 .todayBtn:hover {
-  background-color: var(--bg-surface-elevated);
+  background-color: rgba(6, 182, 212, 0.15);
   color: var(--accent-primary);
-  box-shadow: var(--shadow-soft-sm);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
 }
 
 .todayBtn:active {
@@ -149,18 +161,24 @@
   outline-offset: 1px;
 }
 
+/* INI SPEC-004 - 03 */
+/* Sección derecha anti-colisión: buscador elástico contenido y espaciado optimizado */
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .searchContainer {
   position: relative;
   display: flex;
   align-items: center;
-  width: 220px;
+  max-width: 200px;
+  min-width: 140px;
+  width: 100%;
 }
+/* FIN SPEC-004 - 03 */
 
 .searchIcon {
   position: absolute;
@@ -193,7 +211,7 @@
   outline: none;
   background-color: var(--bg-surface-elevated);
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-light);
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25), 0 0 12px rgba(6, 182, 212, 0.2);
 }
 
 .searchInput::-webkit-search-decoration,
@@ -228,61 +246,12 @@
   outline-offset: 1px;
 }
 
-.newEventBtn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 36px;
-  padding: 0 14px;
-  background-color: var(--accent-primary);
-  color: var(--accent-contrast);
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-soft-sm);
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-  user-select: none;
-  white-space: nowrap;
-}
-
-.newEventBtn:hover {
-  background-color: var(--accent-hover);
-  box-shadow: var(--shadow-soft-md);
-}
-
-.newEventBtn:active {
-  transform: scale(0.97);
-}
-
-.newEventBtn:focus-visible {
-  outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
-}
-
-.shortcutBadge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  font-size: 0.72rem;
-  font-family: inherit;
-  font-weight: 700;
-  color: var(--accent-primary);
-  background-color: #ffffff;
-  border-radius: 4px;
-  margin-left: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-  line-height: 1;
-}
-
-/* Responsividad en pantallas estrechas */
+/* INI SPEC-004 - 03 */
+/* Remoción de estilos de botón redundante y optimización responsiva del Header */
 @media (max-width: 900px) {
   .searchContainer {
-    width: 170px;
+    max-width: 160px;
+    min-width: 120px;
   }
 }
 
@@ -300,19 +269,14 @@
     display: none;
   }
   .header {
-    padding: 0 14px;
+    padding: 0 12px;
     gap: 8px;
   }
   .searchContainer {
-    width: 120px;
-  }
-  .newEventBtn span,
-  .newEventBtn kbd {
-    display: none;
-  }
-  .newEventBtn {
-    padding: 0 10px;
+    max-width: 130px;
+    min-width: 90px;
   }
 }
+/* FIN SPEC-004 - 03 */
 /* FIN SPEC-003 - 04 */
 /* FIN SPEC-001 - 03 */
