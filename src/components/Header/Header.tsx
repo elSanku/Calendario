@@ -6,6 +6,10 @@ import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Search, X } from '
 import { UserProfileBadge } from '../UserProfileBadge/UserProfileBadge';
 import type { UserProfile, UserProfileRole } from '../../types/user';
 //FIN SPEC-004 - 03
+//INI SPEC-005 - 04
+// Tipado de tema visual para Header y propagación
+import type { AppTheme } from '../../types/theme';
+//FIN SPEC-005 - 04
 import { MONTH_NAMES_ES } from '../../utils/dateUtils';
 import styles from './Header.module.css';
 
@@ -23,6 +27,11 @@ export interface HeaderProps {
   onToday?: () => void;
   profile?: UserProfile;
   onRoleChange?: (newRole: UserProfileRole) => void;
+  //INI SPEC-005 - 04
+  // Propiedades opcionales para control y propagación de tema visual
+  theme?: AppTheme;
+  onThemeChange?: (newTheme: AppTheme) => void;
+  //FIN SPEC-005 - 04
 }
 //FIN SPEC-004 - 03
 //FIN SPEC-003 - 04
@@ -43,6 +52,11 @@ export const Header: React.FC<HeaderProps> = ({
   onToday,
   profile,
   onRoleChange,
+  //INI SPEC-005 - 04
+  // Desestructuración de propiedades de tema visual
+  theme,
+  onThemeChange,
+  //FIN SPEC-005 - 04
 }) => {
   const monthName = MONTH_NAMES_ES[currentMonthIndex] ?? 'Enero';
 
@@ -121,7 +135,15 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        <UserProfileBadge profile={profile} onRoleChange={onRoleChange} />
+        {/* INI SPEC-005 - 04 */}
+        {/* Propagación de tema visual a UserProfileBadge */}
+        <UserProfileBadge
+          profile={profile}
+          onRoleChange={onRoleChange}
+          theme={theme}
+          onThemeChange={onThemeChange}
+        />
+        {/* FIN SPEC-005 - 04 */}
       </div>
       {/* FIN SPEC-004 - 03 */}
     </header>

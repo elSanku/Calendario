@@ -105,6 +105,25 @@ describe('Header', () => {
   });
   //FIN SPEC-004 - 04
 
+  //INI SPEC-005 - 06
+  it('propaga correctamente las props theme y onThemeChange hacia UserProfileBadge', () => {
+    const onThemeChange = vi.fn();
+    render(<Header theme="light" onThemeChange={onThemeChange} />);
+
+    const trigger = screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' });
+    fireEvent.click(trigger);
+
+    const lightOption = screen.getByRole('menuitemradio', { name: /Modo Claro/i });
+    const darkOption = screen.getByRole('menuitemradio', { name: /Modo Oscuro/i });
+
+    expect(lightOption.getAttribute('aria-checked')).toBe('true');
+    expect(darkOption.getAttribute('aria-checked')).toBe('false');
+
+    fireEvent.click(darkOption);
+    expect(onThemeChange).toHaveBeenCalledWith('dark');
+  });
+  //FIN SPEC-005 - 06
+
   it('no contiene los enlaces estáticos obsoletos ni el avatar falso (anti-ui-slop)', () => {
     render(<Header />);
     expect(screen.queryByRole('link', { name: 'Hoy' })).toBeNull();

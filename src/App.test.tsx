@@ -8,6 +8,9 @@ import { MONTH_NAMES_ES } from './utils/dateUtils';
 //INI SPEC-004 - 06
 import { DEFAULT_USER_PROFILE, USER_PROFILE_STORAGE_KEY } from './types/user';
 //FIN SPEC-004 - 06
+//INI SPEC-005 - 06
+import { THEME_STORAGE_KEY } from './types/theme';
+//FIN SPEC-005 - 06
 
 beforeAll(() => {
   // Polyfill de <dialog> y Popover API para JSDOM
@@ -393,7 +396,10 @@ describe('App (Flujos de Integración)', () => {
     // 2. Abrir el menú de selección de rol
     fireEvent.click(triggerBtn);
 
-    const menu = screen.getByRole('menu', { name: 'Cambiar rol de usuario' });
+    //INI SPEC-005 - 03
+    // Compatibilidad con el nuevo aria-label del menú flotante ampliado
+    const menu = screen.getByRole('menu', { name: /Menú de perfil y preferencias|Cambiar rol de usuario/ });
+    //FIN SPEC-005 - 03
     expect(menu).toBeTruthy();
 
     // Seleccionar opción "Trabajo"
@@ -448,4 +454,46 @@ describe('App (Flujos de Integración)', () => {
     expect(eventDialog?.hasAttribute('open')).toBe(true);
   });
   //FIN SPEC-004 - 06
+
+  //INI SPEC-005 - 06
+  it('aplica por defecto el tema "dark" en data-theme y permite alternar a "light" y de regreso a "dark" persistiendo en localStorage', () => {
+    render(<App />);
+
+    // 1. Tema inicial por defecto 'dark' aplicado en el elemento raíz y guardado en localStorage
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+
+    // 2. Abrir menú de usuario en UserProfileBadge y seleccionar Modo Claro
+    const userBtn = screen.getByRole('button', {
+      name: 'Perfil de usuario y conmutador de rol',
+    });
+    fireEvent.click(userBtn);
+
+    const lightOption = screen.getByRole('menuitemradio', { name: /Modo Claro/i });
+    fireEvent.click(lightOption);
+
+    // data-theme y localStorage deben cambiar inmediatamente a 'light'
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+
+    // 3. Volver a abrir el menú de usuario y alternar de regreso a Modo Oscuro
+    fireEvent.click(userBtn);
+
+    const darkOption = screen.getByRole('menuitemradio', { name: /Modo Oscuro/i });
+    fireEvent.click(darkOption);
+
+    // data-theme y localStorage deben actualizarse a 'dark'
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+  });
+
+  it('inicia y monta App con tema "light" cuando ya se encuentra persistido en localStorage', () => {
+    localStorage.setItem(THEME_STORAGE_KEY, 'light');
+
+    render(<App />);
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
+  });
+  //FIN SPEC-005 - 06
 });

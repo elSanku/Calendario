@@ -29,6 +29,11 @@ import { ALL_CATEGORIES, filterEvents } from './utils/categoryUtils';
 import type { UserProfile, UserProfileRole } from './types/user';
 import { USER_PROFILE_STORAGE_KEY, DEFAULT_USER_PROFILE } from './types/user';
 //FIN SPEC-004 - 01
+//INI SPEC-005 - 05
+// Tipos y utilidades de persistencia para conmutador de tema visual
+import type { AppTheme } from './types/theme';
+import { THEME_STORAGE_KEY, getStoredTheme } from './types/theme';
+//FIN SPEC-005 - 05
 import styles from './App.module.css';
 
 const EVENTS_STORAGE_KEY = 'calendar-events';
@@ -108,6 +113,20 @@ export const App: React.FC = () => {
     }));
   };
   //FIN SPEC-004 - 01
+
+  //INI SPEC-005 - 05
+  // Estado reactivo de tema visual con persistencia y sincronización con el elemento raíz
+  const [theme, setTheme] = useState<AppTheme>(getStoredTheme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      // Silencioso ante restricciones de cuota o modo incógnito
+    }
+  }, [theme]);
+  //FIN SPEC-005 - 05
 
   // Estado del modal de creación de eventos
   const [isEventModalOpen, setIsEventModalOpen] = useState<boolean>(false);
@@ -397,6 +416,11 @@ export const App: React.FC = () => {
             onToday={handleGoToToday}
             profile={userProfile}
             onRoleChange={handleRoleChange}
+            //INI SPEC-005 - 05
+            // Conexión de estado y conmutación de tema visual
+            theme={theme}
+            onThemeChange={setTheme}
+            //FIN SPEC-005 - 05
           />
           {/* FIN SPEC-004 - 03 */}
           <CalendarGrid

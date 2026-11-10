@@ -43,13 +43,16 @@ describe('UserProfileBadge', () => {
     fireEvent.click(trigger);
 
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
-    const menu = screen.getByRole('menu', { name: 'Cambiar rol de usuario' });
+    //INI SPEC-005 - 03
+    // Menú flotante ampliado con roles y preferencias de apariencia (4 opciones tipo menuitemradio)
+    const menu = screen.getByRole('menu', { name: /Menú de perfil y preferencias|Cambiar rol de usuario/ });
     expect(menu).toBeTruthy();
 
     const options = screen.getAllByRole('menuitemradio');
-    expect(options).toHaveLength(2);
+    expect(options).toHaveLength(4);
     expect(options[0].getAttribute('aria-checked')).toBe('true');
     expect(options[1].getAttribute('aria-checked')).toBe('false');
+    //FIN SPEC-005 - 03
   });
 
   it('cierra el menú al presionar la tecla Escape y devuelve el foco al disparador', () => {
@@ -99,5 +102,59 @@ describe('UserProfileBadge', () => {
     expect(screen.queryByRole('menu')).toBeNull();
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
   });
+
+  //INI SPEC-005 - 03
+  it('renderiza la sección accesible "Apariencia" con opciones Modo Claro y Modo Oscuro', () => {
+    render(<UserProfileBadge theme="light" />);
+
+    const trigger = screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' });
+    fireEvent.click(trigger);
+
+    expect(screen.getByText('Apariencia')).toBeTruthy();
+
+    const lightOption = screen.getByRole('menuitemradio', { name: /Modo Claro/i });
+    const darkOption = screen.getByRole('menuitemradio', { name: /Modo Oscuro/i });
+
+    expect(lightOption.getAttribute('aria-checked')).toBe('true');
+    expect(darkOption.getAttribute('aria-checked')).toBe('false');
+  });
+
+  it('invoca onThemeChange y cierra el menú al seleccionar una opción de tema', () => {
+    const onThemeChange = vi.fn();
+    render(<UserProfileBadge theme="dark" onThemeChange={onThemeChange} />);
+
+    const trigger = screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' });
+    fireEvent.click(trigger);
+
+    const lightOption = screen.getByRole('menuitemradio', { name: /Modo Claro/i });
+    fireEvent.click(lightOption);
+
+    expect(onThemeChange).toHaveBeenCalledTimes(1);
+    expect(onThemeChange).toHaveBeenCalledWith('light');
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+  //FIN SPEC-005 - 03
+
+  //INI SPEC-005 - 06
+  it('permite conmutar a "Modo Oscuro" invocando onThemeChange("dark") y verifica el separador accesible', () => {
+    const onThemeChange = vi.fn();
+    render(<UserProfileBadge theme="light" onThemeChange={onThemeChange} />);
+
+    const trigger = screen.getByRole('button', { name: 'Perfil de usuario y conmutador de rol' });
+    fireEvent.click(trigger);
+
+    expect(screen.getByRole('separator')).toBeTruthy();
+
+    const darkOption = screen.getByRole('menuitemradio', { name: /Modo Oscuro/i });
+    expect(darkOption.getAttribute('aria-checked')).toBe('false');
+
+    fireEvent.click(darkOption);
+
+    expect(onThemeChange).toHaveBeenCalledTimes(1);
+    expect(onThemeChange).toHaveBeenCalledWith('dark');
+    expect(screen.queryByRole('menu')).toBeNull();
+  });
+  //FIN SPEC-005 - 06
 });
 //FIN SPEC-004 - 04

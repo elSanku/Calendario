@@ -25,7 +25,10 @@
 
 .trigger:hover {
   background-color: var(--bg-surface-elevated);
-  border-color: rgba(6, 182, 212, 0.4);
+  /* INI SPEC-005 - 03 */
+  /* Desacoplamiento de cian estático por variable de acento dinámico */
+  border-color: var(--accent-primary);
+  /* FIN SPEC-005 - 03 */
 }
 
 .trigger:focus-visible {
@@ -40,13 +43,18 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: rgba(6, 182, 212, 0.15);
+  /* INI SPEC-005 - 03 */
+  /* Sustitución de colores cian hardcodeados por variables temáticas dinámicas */
+  background-color: var(--accent-light);
   color: var(--accent-primary);
+  /* FIN SPEC-005 - 03 */
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   flex-shrink: 0;
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+  /* INI SPEC-005 - 03 */
+  box-shadow: 0 0 10px var(--accent-light);
+  /* FIN SPEC-005 - 03 */
 }
 
 .userInfo {
@@ -170,4 +178,32 @@
     gap: 6px;
   }
 }
+
+/* INI SPEC-005 - 03 */
+/* Clases para subsección de apariencia, divisor accesible e iconos de tema */
+.menuDivider {
+  height: 1px;
+  background-color: var(--border-strong);
+  margin: 6px 0;
+}
+
+.itemWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.themeIcon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.themeItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+/* FIN SPEC-005 - 03 */
 /* FIN SPEC-004 - 02 */

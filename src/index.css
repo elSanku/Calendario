@@ -93,6 +93,148 @@ body {
 }
 /* FIN SPEC-004 - 05 */
 
+/* INI SPEC-005 - 02 */
+/* Tokens globales duales: Midnight Vibe y Soft UI Cálido */
+:root,
+[data-theme="dark"] {
+  /* 1. Fondos y Superficies Midnight Vibe */
+  --bg-canvas: #0B0E14;
+  --bg-surface: #181E2B;
+  --bg-surface-elevated: #121620;
+  --bg-subtle: #1F2637;
+
+  /* 2. Bordes y Divisores */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-strong: #262F43;
+
+  /* 3. Colores de Acento */
+  --accent-primary: #06B6D4;
+  --accent-hover: #0891B2;
+  --accent-light: rgba(6, 182, 212, 0.12);
+  --accent-contrast: #082F49;
+  --accent-glow: 0 4px 20px rgba(6, 182, 212, 0.35);
+
+  --accent-secondary: #8B5CF6;
+  --accent-secondary-light: rgba(139, 92, 246, 0.15);
+  --accent-secondary-text: #A78BFA;
+
+  /* 4. Tipografía y Jerarquía */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #475569;
+
+  /* 5. Sidebar activo */
+  --sidebar-active-bg: rgba(139, 92, 246, 0.15);
+  --sidebar-active-text: #A78BFA;
+
+  /* 6. Sombras Midnight Vibe */
+  --shadow-soft-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-soft-md: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-soft-lg: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+
+  /* 7. Categorías Midnight Vibe */
+  --cat-work-bg: rgba(56, 189, 248, 0.15);
+  --cat-work-text: #7DD3FC;
+  --cat-work-dot: #38BDF8;
+
+  --cat-personal-bg: rgba(16, 185, 129, 0.15);
+  --cat-personal-text: #6EE7B7;
+  --cat-personal-dot: #10B981;
+
+  --cat-health-bg: rgba(168, 85, 247, 0.15);
+  --cat-health-text: #D8B4FE;
+  --cat-health-dot: #A855F7;
+
+  --cat-important-bg: rgba(244, 63, 94, 0.15);
+  --cat-important-text: #FDA4AF;
+  --cat-important-dot: #F43F5E;
+
+  /* 8. Feriados Midnight Vibe */
+  --holiday-bg: rgba(245, 158, 11, 0.08);
+  --holiday-text: #fbbf24;
+  --holiday-border: rgba(245, 158, 11, 0.25);
+}
+
+[data-theme="light"] {
+  /* 1. Fondos y Superficies Soft UI Cálido */
+  --bg-canvas: #FBFBF9;
+  --bg-surface: #FAF9F6;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-subtle: #F5F3EF;
+
+  /* 2. Bordes y Divisores */
+  --border-subtle: #F0ECE4;
+  --border-strong: #EAE6DF;
+
+  /* 3. Tipografía y Jerarquía */
+  --text-primary: #2A2521;
+  --text-secondary: #7C7267;
+  --text-tertiary: #C4BDB5;
+
+  /* 4. Colores de Acento (Terracota Editorial) */
+  --accent-primary: #D96B43;
+  --accent-hover: #C85A32;
+  --accent-light: rgba(217, 107, 67, 0.08);
+  --accent-contrast: #FFFFFF;
+  --accent-glow: 0 8px 20px rgba(217, 107, 67, 0.35);
+
+  --accent-secondary: #D97706;
+  --accent-secondary-light: rgba(217, 119, 6, 0.12);
+  --accent-secondary-text: #B45309;
+
+  /* 5. Sidebar activo Soft UI */
+  --sidebar-active-bg: #F6EFE9;
+  --sidebar-active-text: #C85A32;
+
+  /* 6. Sombras multicapa cálidas */
+  --shadow-soft-sm: 0 2px 6px rgba(140, 115, 95, 0.04);
+  --shadow-soft-md: 0 8px 24px -4px rgba(140, 115, 95, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-soft-lg: 0 20px 40px -15px rgba(140, 115, 95, 0.07), 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-inset: inset 0 2px 4px rgba(140, 115, 95, 0.04);
+
+  /* 7. Categorías pasteles desaturados */
+  --cat-work-bg: #E0F2FE;
+  --cat-work-text: #0369A1;
+  --cat-work-dot: #0284C7;
+
+  --cat-personal-bg: #DCFCE7;
+  --cat-personal-text: #15803D;
+  --cat-personal-dot: #16A34A;
+
+  --cat-health-bg: #F3E8FF;
+  --cat-health-text: #7E22CE;
+  --cat-health-dot: #9333EA;
+
+  --cat-important-bg: #FEE2E2;
+  --cat-important-text: #B91C1C;
+  --cat-important-dot: #DC2626;
+
+  /* 8. Feriados Soft UI Cálido */
+  --holiday-bg: rgba(217, 107, 67, 0.07);
+  --holiday-text: #9a3412;
+  --holiday-border: rgba(217, 107, 67, 0.22);
+}
+
+/* Transición suave global de color y fondo */
+body {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:root body,
+[data-theme="dark"] body {
+  background-image: 
+    radial-gradient(circle at 14% 16%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 86% 84%, rgba(139, 92, 246, 0.04) 0%, transparent 45%);
+}
+
+[data-theme="light"] body {
+  background-image: 
+    radial-gradient(circle at 14% 16%, rgba(217, 107, 67, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 86% 84%, rgba(140, 115, 95, 0.03) 0%, transparent 45%);
+}
+/* FIN SPEC-005 - 02 */
+
 button {
   font-family: inherit;
 }

@@ -2,17 +2,31 @@
 // Componente accesible UserProfileBadge con avatar, nombre, rol activo y menú conmutador
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Check } from 'lucide-react';
+//INI SPEC-005 - 03
+// Iconos Sun y Moon para opciones de tema visual y tipo AppTheme
+import { Sun, Moon } from 'lucide-react';
+import type { AppTheme } from '../../types/theme';
+//FIN SPEC-005 - 03
 import { DEFAULT_USER_PROFILE, type UserProfile, type UserProfileRole } from '../../types/user';
 import styles from './UserProfileBadge.module.css';
 
 export interface UserProfileBadgeProps {
   profile?: UserProfile;
   onRoleChange?: (newRole: UserProfileRole) => void;
+  //INI SPEC-005 - 03
+  // Propiedades opcionales para control y conmutación de tema
+  theme?: AppTheme;
+  onThemeChange?: (newTheme: AppTheme) => void;
+  //FIN SPEC-005 - 03
 }
 
 export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
   profile = DEFAULT_USER_PROFILE,
   onRoleChange,
+  //INI SPEC-005 - 03
+  theme,
+  onThemeChange,
+  //FIN SPEC-005 - 03
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +43,15 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
     setIsOpen(false);
     triggerRef.current?.focus();
   };
+
+  //INI SPEC-005 - 03
+  // Conmutador accesible de tema visual
+  const handleThemeSelect = (newTheme: AppTheme) => {
+    onThemeChange?.(newTheme);
+    setIsOpen(false);
+    triggerRef.current?.focus();
+  };
+  //FIN SPEC-005 - 03
 
   useEffect(() => {
     if (!isOpen) return;
@@ -84,7 +107,10 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
         <div
           className={styles.menu}
           role="menu"
-          aria-label="Cambiar rol de usuario"
+          //INI SPEC-005 - 03
+          // Menú accesible ampliado con rol de usuario y preferencias de apariencia
+          aria-label="Menú de perfil y preferencias"
+          //FIN SPEC-005 - 03
         >
           <div className={styles.menuHeader}>
             <span className={styles.menuTitle}>Contexto de calendario</span>
@@ -110,6 +136,50 @@ export const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
               );
             })}
           </div>
+
+          {/* INI SPEC-005 - 03 */}
+          {/* Subsección de apariencia accesible con conmutador claro/oscuro */}
+          <div className={styles.menuDivider} role="separator" />
+
+          <div className={styles.menuHeader}>
+            <span className={styles.menuTitle}>Apariencia</span>
+          </div>
+          <div className={styles.menuItems}>
+            <button
+              type="button"
+              role="menuitemradio"
+              aria-checked={theme === 'light'}
+              tabIndex={0}
+              className={`${styles.menuItem} ${theme === 'light' ? styles.menuItemActive : ''}`}
+              onClick={() => handleThemeSelect('light')}
+            >
+              <div className={styles.itemWithIcon}>
+                <Sun size={15} className={styles.themeIcon} aria-hidden="true" />
+                <span className={styles.roleLabel}>Modo Claro</span>
+              </div>
+              {theme === 'light' && (
+                <Check size={14} className={styles.checkIcon} aria-hidden="true" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              role="menuitemradio"
+              aria-checked={theme === 'dark' || !theme}
+              tabIndex={0}
+              className={`${styles.menuItem} ${theme === 'dark' || !theme ? styles.menuItemActive : ''}`}
+              onClick={() => handleThemeSelect('dark')}
+            >
+              <div className={styles.itemWithIcon}>
+                <Moon size={15} className={styles.themeIcon} aria-hidden="true" />
+                <span className={styles.roleLabel}>Modo Oscuro</span>
+              </div>
+              {(theme === 'dark' || !theme) && (
+                <Check size={14} className={styles.checkIcon} aria-hidden="true" />
+              )}
+            </button>
+          </div>
+          {/* FIN SPEC-005 - 03 */}
         </div>
       )}
     </div>
